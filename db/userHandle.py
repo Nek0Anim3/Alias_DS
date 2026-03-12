@@ -19,7 +19,7 @@ async def addPlayertoDB(uid: int, usname: str, lobby_id: int, role: str):
             "lobby_id": lobby_id,
             "role": role
         })
-    print("Player added", uid)
+    print("USER DB: Player added", uid)
 
 async def removePlayerfromDB(uid: int):
     db = get_Db()
@@ -28,7 +28,7 @@ async def removePlayerfromDB(uid: int):
         col.find_one_and_update({"uid": uid}, {"$set": {"lobby_id": ""}}),
         col.find_one_and_update({"uid": uid}, {"$set": {"role": ""}})
     )
-    print("Player flushed, ", uid)
+    print("USER DB: Player flushed, ", uid)
 
 async def flushPlayersDB():
     db = get_Db()
@@ -37,4 +37,4 @@ async def flushPlayersDB():
         col.update_many({}, {"$set": {"lobby_id": ""}}),
         col.update_many({}, {"$set": {"role": ""}}),
         )
-    print("Player's lobbys and roles flushed")
+    print("USER DB: Player's lobbys and roles flushed")

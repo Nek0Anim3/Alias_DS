@@ -1,9 +1,8 @@
-import asyncio
-
 import discord
+
+import bot.states.lobby_state as lobby_state
 from bot.views.base import BaseView
 from db.lobbyHandle import createLobbyDB, getLobbyCode
-from db.userHandle import addPlayertoDB
 
 
 class MainMenuView(BaseView):
@@ -17,7 +16,9 @@ class MainMenuView(BaseView):
         from bot.views.lobby_menu import LobbyMenuView
         await  createLobbyDB(interaction.user.id, interaction.user.name)
         code = await getLobbyCode(interaction.user.id)
-        await self.goto(interaction, LobbyMenuView(interaction.user.name, code))
+        view = LobbyMenuView(code=code, uname=interaction.user.name, playerCount=1)
+        lobby_state.register_view(code, interaction.user.id, view)
+        await self.goto(interaction, view)
 
     @discord.ui.button(label="Приєднатися", style=discord.ButtonStyle.primary, row=0)
     async def open_join(self, button: discord.ui.Button, interaction: discord.Interaction):

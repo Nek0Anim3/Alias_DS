@@ -27,15 +27,15 @@ async def deleteLobbyDB(uid: int):
 
     rmdoc = await col.find_one_and_delete({"host": uid})
     if rmdoc:
-        print("Removed ", rmdoc)
+        print("MONGO: Removed ", rmdoc)
     else:
-        print("No lobby deleted, removing user instead")
+        print("MONGO: No lobby deleted, removing user instead")
         coll = db.get_collection('players')
         player = await coll.find_one({"uid": uid})
         if player is not None:
             lobby_id = player.get("lobby_id")
             await col.find_one_and_update({"host": lobby_id}, {"$pull": {"players": uid}})
-            print("Removed successfully ", uid)
+            print("MONGO: Removed ", uid)
 
 
 async def findLobbyByCode(lobby_code: int):
@@ -66,7 +66,7 @@ async def flushDb():
     db = get_Db()
     col = db.get_collection('lobbys')
     col.delete_many({})
-    print("Deleted All lobbies on start")
+    print("MONGO: Deleted All lobbies on start")
 
 
 # -------------------------

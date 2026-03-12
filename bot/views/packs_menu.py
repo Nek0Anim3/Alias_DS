@@ -11,4 +11,4 @@ class PacksMenuView(BaseView):
 
     @discord.ui.button(label="ПРИКОЛ", style=discord.ButtonStyle.primary, row=0)
     async def open_lobby(self, button: discord.ui.Button, interaction: discord.Interaction):
-        await self.goto(interaction, PacksMenuView.menu_text, PacksMenuView())
+        await self.goto(interaction, PacksMenuView())
