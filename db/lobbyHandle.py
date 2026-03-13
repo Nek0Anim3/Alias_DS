@@ -12,7 +12,7 @@ async def createLobbyDB(uid: int, name: str):
     await asyncio.gather(
         col.insert_one({
             "host": uid,
-            "code": code,
+            "code": 1234, #TEMP
             "name": name,
             "status": "waiting",
             "players": [uid],

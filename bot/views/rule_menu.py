@@ -5,4 +5,4 @@ class RuleMenuView(BaseView):
 
     def __init__(self):
         from bot.views.main_menu import MainMenuView
-        super().__init__(back_view=MainMenuView)
+        super().__init__(back_view=MainMenuView())

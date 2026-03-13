@@ -1,5 +1,6 @@
 import discord
 from bot.views.base import BaseView
+
 from db.packs import addPack
 
 
@@ -39,7 +40,10 @@ class CreatePackMenu(BaseView):
             await interaction.response.send_message("Мінімум додайте одне слово!", ephemeral=True)
             return
 
-        await addPack(data.get("pack_name"), words, interaction.user.id) #Виклик БД
+        await addPack(data.get("pack_name"), words, interaction.user.id)#Виклик БД
+
+        from bot.views.packs_menu import PacksMenuView
+        await self.goto(interaction, PacksMenuView())
 
     @discord.ui.button(label="Назад", style=discord.ButtonStyle.danger, row=4)
     async def cancel(self, button: discord.ui.Button, interaction: discord.Interaction):

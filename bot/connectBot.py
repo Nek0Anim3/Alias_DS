@@ -15,7 +15,7 @@ async def start_bot():
     #Реєстрація івентів, команд та іншого.. не загубитись пж(
     bot.load_extension('bot.cogs.main_menu_cog')
     bot.load_extension('bot.cogs.create_packs_cog')
-
+    bot.load_extension('bot.cogs.lobby_update_cog')
     await bot.start(os.getenv("BOT"))
 
 def get_bot() -> discord.Bot:

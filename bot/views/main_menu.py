@@ -16,7 +16,7 @@ class MainMenuView(BaseView):
         from bot.views.lobby_menu import LobbyMenuView
         await  createLobbyDB(interaction.user.id, interaction.user.name)
         code = await getLobbyCode(interaction.user.id)
-        view = LobbyMenuView(code=code, uname=interaction.user.name, playerCount=1)
+        view = LobbyMenuView(code=code, uname=interaction.user.name, playerCount=1, players=[interaction.user.name])
         lobby_state.register_view(code, interaction.user.id, view)
         await self.goto(interaction, view)
 
@@ -34,5 +34,12 @@ class MainMenuView(BaseView):
     async def open_help(self, button: discord.ui.Button, interaction: discord.Interaction):
         from bot.views.rule_menu import RuleMenuView
         await self.goto(interaction, RuleMenuView())
+
+    @discord.ui.button(label="Лобби ивент", style=discord.ButtonStyle.secondary, row=2)
+    async def test_btn(self, button: discord.ui.Button, interaction: discord.Interaction):
+        from bot.connectBot import get_bot
+        bot = get_bot()
+        code = 1234 #temp
+        bot.dispatch("custom_e", code)
 
 

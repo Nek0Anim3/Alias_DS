@@ -15,6 +15,7 @@ class MenuCog(commands.Cog):
             view=MainMenuView(),
             ephemeral=True
         )
+        #MESsAGE ID ХЗ
 
 def setup(bot):
     bot.add_cog(MenuCog(bot))
