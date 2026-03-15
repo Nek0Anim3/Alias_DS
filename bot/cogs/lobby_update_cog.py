@@ -11,14 +11,15 @@ class LobbyUpdateCog(commands.Cog):
         self.bot = bot
 
     @commands.Cog.listener()
-    async def on_custom_e(self, code):
+    async def on_lobby_join(self, code):
         lobby_view = get_views(code)
         lobby = await findLobbyByCode(code)
         playerCount = len(lobby['players'])
+        players = lobby['player_names']
         print("LOBBY_UPDATE: Triggered custom event!!")
 
         for uid, view in lobby_view.items():
-            await view.refreshLobby(playerCount)
+            await view.refreshLobby(playerCount, players)
 
 
 

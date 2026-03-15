@@ -23,7 +23,7 @@ class MainMenuView(BaseView):
     @discord.ui.button(label="Приєднатися", style=discord.ButtonStyle.primary, row=0)
     async def open_join(self, button: discord.ui.Button, interaction: discord.Interaction):
         from bot.views.join_menu import JoinMenuView
-        await self.goto(interaction, JoinMenuView("code_lobby"))
+        await self.goto(interaction, JoinMenuView())
         set_state(interaction.user.id, States.CODE_LOBBY_WAIT)
 
     @discord.ui.button(label="Набори слів", style=discord.ButtonStyle.secondary, row=1)

@@ -28,9 +28,10 @@ class LobbyMenuView(BaseView):
         )
 
 
-    async def refreshLobby(self, player_count: int): #не забути про те, що тут метод повинен оновлювати ще список гравців
+    async def refreshLobby(self, player_count: int, players: list): #не забути про те, що тут метод повинен оновлювати ще список гравців
         #ще можна копіпаст цього методу для інших менюшок де це реально буде необхідно в реалтаймі
         self.player_count = player_count
+        self.players = players
         self.menu_text = self._build_text()
         if self.message:
             await self.interaction.edit_original_response(content=self.menu_text, view=self)

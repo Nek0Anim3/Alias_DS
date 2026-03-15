@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from bot.states.states import States, get_state, set_state, update_data, get_data
+from bot.states.states import States, get_state, set_state, update_data, get_data, clear_state
 from bot.views.packs_creation_menu import CreatePackMenu
 from db.lobbyHandle import joinLobbyDB
 
@@ -20,7 +20,13 @@ class LobbyJoinCog(commands.Cog):
             except ValueError:
                 await message.reply(content="Код повинен бути з 4 цифр")
                 return
-            await joinLobbyDB(code, message.author.id, message.author.name)
+            isJoined = await joinLobbyDB(code, message.author.id, message.author.name)
+            if not isJoined:
+                return
+            clear_state(message.author.id)
+            from bot.connectBot import get_bot
+            bot = get_bot()
+            bot.dispatch("lobby_join", code)
             print("JOINED LOBBY, player ", message.author.name)
 
 def setup(bot):

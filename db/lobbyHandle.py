@@ -1,5 +1,6 @@
 import asyncio
 import random
+from datetime import datetime
 
 from db import get_Db
 from db.userHandle import addPlayertoDB
@@ -11,11 +12,13 @@ async def createLobbyDB(uid: int, name: str):
     code = await generateLobbyCode()
     await asyncio.gather(
         col.insert_one({
+            "creation_date": datetime.now().timestamp(),
             "host": uid,
-            "code": 1234, #TEMP
+            "code": code,
             "name": name,
             "status": "waiting",
             "players": [uid],
+            "player_names": [name],
             "pack": "none"
         }),
         addPlayertoDB(uid, name, uid, "host")
@@ -43,11 +46,15 @@ async def joinLobbyDB(code: int, user_id: int, usname: str):
     col = db.get_collection('lobbys')
     print("MONGO: Got code,", code)
     col.find_one_and_update({"code": code}, {'$push': {"players": user_id}})
+    col.find_one_and_update({"code": code}, {'$push': {"player_names": usname}})
     lobby = await col.find_one({"code": code})
+    if not lobby:
+        return False
     lobby_id = lobby['host']
     print("MONGO: Got lobby_id, ", lobby_id)
     await addPlayertoDB(user_id, usname, lobby_id, "player")
     print("Added ", user_id)
+    return True
 
 # -------------------------
 
