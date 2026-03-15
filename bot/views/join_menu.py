@@ -1,8 +1,20 @@
+from bot.states.states import clear_state
 from bot.views.base import BaseView
+import discord
+
+from bot.views.main_menu import MainMenuView
+
 
 class JoinMenuView(BaseView):
-    menu_text = "Підключення до лобі.. \nВведіть код лобі"
 
-    def __init__(self):
-        from bot.views.main_menu import MainMenuView
-        super().__init__(back_view=MainMenuView())
+    def __init__(self, stage: str):
+        super().__init__(back_view=None)
+        self.stage = stage
+        self.menu_text = "Підключення до лобі.. \nВведіть код лобі"
+
+
+    @discord.ui.button(label="Вийти", style=discord.ButtonStyle.secondary, row=4)
+    async def exit_lobby(self, button: discord.ui.Button, interaction: discord.Interaction):
+        self.stage = ""
+        clear_state(interaction.user.id)
+        await self.goto(interaction, MainMenuView())

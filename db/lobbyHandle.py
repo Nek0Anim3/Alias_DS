@@ -38,11 +38,14 @@ async def deleteLobbyDB(uid: int):
             print("MONGO: Removed ", uid)
 
 
-async def joinLobbyDB(lobby_id: int, user_id: int, usname: str):
+async def joinLobbyDB(code: int, user_id: int, usname: str):
     db = get_Db()
     col = db.get_collection('lobbys')
-    print("Got lobby_id,", type(lobby_id))
-    col.find_one_and_update({"host": lobby_id}, {'$push': {"players": user_id}})
+    print("MONGO: Got code,", code)
+    col.find_one_and_update({"code": code}, {'$push': {"players": user_id}})
+    lobby = await col.find_one({"code": code})
+    lobby_id = lobby['host']
+    print("MONGO: Got lobby_id, ", lobby_id)
     await addPlayertoDB(user_id, usname, lobby_id, "player")
     print("Added ", user_id)
 

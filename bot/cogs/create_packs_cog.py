@@ -1,6 +1,3 @@
-import asyncio
-from asyncio import sleep
-
 import discord
 from discord.ext import commands
 from bot.states.states import States, get_state, set_state, update_data, get_data

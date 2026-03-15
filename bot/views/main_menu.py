@@ -3,7 +3,7 @@ import discord
 import bot.states.lobby_state as lobby_state
 from bot.views.base import BaseView
 from db.lobbyHandle import createLobbyDB, getLobbyCode
-
+from bot.states.states import set_state, States
 
 class MainMenuView(BaseView):
     menu_text = "Вітаю в Alias"
@@ -23,7 +23,8 @@ class MainMenuView(BaseView):
     @discord.ui.button(label="Приєднатися", style=discord.ButtonStyle.primary, row=0)
     async def open_join(self, button: discord.ui.Button, interaction: discord.Interaction):
         from bot.views.join_menu import JoinMenuView
-        await self.goto(interaction, JoinMenuView())
+        await self.goto(interaction, JoinMenuView("code_lobby"))
+        set_state(interaction.user.id, States.CODE_LOBBY_WAIT)
 
     @discord.ui.button(label="Набори слів", style=discord.ButtonStyle.secondary, row=1)
     async def open_packs(self, button: discord.ui.Button, interaction: discord.Interaction):
@@ -35,11 +36,10 @@ class MainMenuView(BaseView):
         from bot.views.rule_menu import RuleMenuView
         await self.goto(interaction, RuleMenuView())
 
+    #DEV
     @discord.ui.button(label="Лобби ивент", style=discord.ButtonStyle.secondary, row=2)
     async def test_btn(self, button: discord.ui.Button, interaction: discord.Interaction):
         from bot.connectBot import get_bot
         bot = get_bot()
         code = 1234 #temp
         bot.dispatch("custom_e", code)
-
-
