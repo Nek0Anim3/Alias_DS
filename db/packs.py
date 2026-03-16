@@ -12,8 +12,6 @@ async def addPack(packname: str, words: list, uid: int):
     print("PACKS: Створений набір слів ", packname)
 
 
-
-    
 async def getPackById(packname: str):
     docName = None
     db = get_Db()
@@ -22,3 +20,12 @@ async def getPackById(packname: str):
     if document:
         docName = document.get("name")
     return docName
+
+async def fetchOwnPacks(uid: int):
+    db = get_Db()
+    col = db.get_collection('packs')
+    docs = col.find({"uid": uid})
+    packs = []
+    async for doc in docs:
+        packs.append(doc)
+    return packs

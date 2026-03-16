@@ -1,4 +1,5 @@
-from bot.states.states import clear_state
+
+
 from bot.views.base import BaseView
 import discord
 
@@ -21,6 +22,9 @@ class JoinMenuView(BaseView):
 
     @discord.ui.button(label="Вийти", style=discord.ButtonStyle.secondary, row=4)
     async def exit_lobby(self, button: discord.ui.Button, interaction: discord.Interaction):
+        from bot.states.join_state import unregister_join_view
+        from bot.states.states import clear_state
         from bot.views.main_menu import MainMenuView
+        unregister_join_view(interaction.user.id)
         clear_state(interaction.user.id)
         await self.goto(interaction, MainMenuView())
