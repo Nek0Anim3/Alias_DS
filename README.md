@@ -16,5 +16,3 @@ Alias is a board game, where you need to guess the word, while another explains 
 
 # How to configure and run
 To run, simply start walking and then gain speed... I'll add here an explanation later, on how to run bot, and configure it properly.
-
-Can i go play in my room? Ahh.. well (колодец), okay (хорошо) sweetie (сладость) 
