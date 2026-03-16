@@ -1,8 +1,8 @@
 import discord
 from discord.ext import commands
 from bot.states.states import States, get_state, set_state, update_data, get_data, clear_state
-from bot.views.packs_creation_menu import CreatePackMenu
-from db.lobbyHandle import joinLobbyDB
+from bot.views.lobby_player_menu import LobbyClientView
+from db.lobbyHandle import joinLobbyDB, findLobbyByCode
 
 
 class LobbyJoinCog(commands.Cog):
@@ -24,10 +24,20 @@ class LobbyJoinCog(commands.Cog):
             if not isJoined:
                 return
             clear_state(message.author.id)
+            #Оновлення менюшки для хоста лобі
             from bot.connectBot import get_bot
             bot = get_bot()
-            bot.dispatch("lobby_join", code)
+            bot.dispatch("update_lobby", code)
+
+            lobby = await findLobbyByCode(code)
+            #Оновлення менюшки для гравця який приєднується
+            from bot.states.join_state import get_join_view
+            view = get_join_view(message.author.id)
+            await view.joinLobbySetView(lobby_name=lobby['name'], player_count=len(lobby['players']), players=lobby['player_names'], code=code)
+
             print("JOINED LOBBY, player ", message.author.name)
+
+
 
 def setup(bot):
     bot.add_cog(LobbyJoinCog(bot))

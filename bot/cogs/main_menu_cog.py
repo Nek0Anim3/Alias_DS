@@ -1,8 +1,6 @@
 import discord
-from discord import slash_command
 from discord.ext import commands
 from bot.views.main_menu import MainMenuView
-from bot.views.test_view import TestView
 
 class MenuCog(commands.Cog):
     def __init__(self, bot):
@@ -15,7 +13,6 @@ class MenuCog(commands.Cog):
             view=MainMenuView(),
             ephemeral=True
         )
-        #MESsAGE ID ХЗ
 
 def setup(bot):
     bot.add_cog(MenuCog(bot))

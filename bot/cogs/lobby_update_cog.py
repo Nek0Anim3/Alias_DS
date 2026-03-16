@@ -11,7 +11,7 @@ class LobbyUpdateCog(commands.Cog):
         self.bot = bot
 
     @commands.Cog.listener()
-    async def on_lobby_join(self, code):
+    async def on_update_lobby(self, code):
         lobby_view = get_views(code)
         lobby = await findLobbyByCode(code)
         playerCount = len(lobby['players'])

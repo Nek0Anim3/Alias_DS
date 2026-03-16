@@ -1,4 +1,5 @@
 import asyncio
+import math
 import random
 from datetime import datetime
 
@@ -12,7 +13,7 @@ async def createLobbyDB(uid: int, name: str):
     code = await generateLobbyCode()
     await asyncio.gather(
         col.insert_one({
-            "creation_date": datetime.now().timestamp(),
+            "creation_date": math.floor(datetime.now().timestamp()),
             "host": uid,
             "code": code,
             "name": name,
@@ -55,6 +56,14 @@ async def joinLobbyDB(code: int, user_id: int, usname: str):
     await addPlayertoDB(user_id, usname, lobby_id, "player")
     print("Added ", user_id)
     return True
+
+async def leaveLobbyDB(code: int, user_id: int, usname: str):
+    db = get_Db()
+    col = db.get_collection('lobbys')
+    print("MONGO: Got code,", code)
+    await col.find_one_and_update({"code": code}, {'$pull': {"players": user_id}})
+    await col.find_one_and_update({"code": code}, {'$pull': {"player_names": usname}})
+    print("MONGO: Removed from lobby,", user_id)
 
 # -------------------------
 
