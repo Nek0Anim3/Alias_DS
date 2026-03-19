@@ -1,3 +1,4 @@
+
 import discord
 
 
@@ -5,36 +6,37 @@ from bot.views.base import BaseView
 
 
 class PacksListView(BaseView):
-    def __init__(self, packs: list[dict]):
+    def __init__(self, packs: list[dict], interaction: discord.Interaction):
         from bot.views.packs_menu import PacksMenuView
         self.menu_text = "Твої набори:" if packs else "Немає створених наборів"
+        self.interaction = interaction
         super().__init__(back_view=None)
 
         for i, pack in enumerate(packs):
-            self.add_item(PackButton(pack=pack, row=i // 3))
+            self.add_item(PackButton(pack=pack, row=i // 3,))
         self.add_item(BackButton(row=4, view=PacksMenuView()))
 
 class PackButton(discord.ui.Button):
-    def __init__(self, pack: dict, row: int):
+    def __init__(self, pack: dict, row: int) -> None:
         super().__init__(
             label=f"Набір '{pack['name']}'",
             style=discord.ButtonStyle.primary,
-            custom_id=f"pack_{pack['name']}",  # уникальный id
+            custom_id=f"pack_{pack['name']}",
             row=row
         )
         self.pack = pack
 
     async def callback(self, interaction: discord.Interaction):
-        words = self.pack['words']
-        words_str = "\n".join(f" {w}" for w in words)
-        from bot.states.pack_view_state import get_pack_view
-        view = get_pack_view(interaction.user.id)
+        from bot.views.packs_one_menu import PackDescriptionMenu
+        view = PackDescriptionMenu(
+            pack_name=self.pack['name'],
+            words=self.pack['words'],
+            word_count=len(self.pack['words'])
+        )
         await interaction.response.edit_message(
-            content=f"Набір {self.pack['name']}\n"
-                    f"Слів: {len(self.pack['words'])}\n"
-                    f"{words_str}",
-            view = view
-            )
+            content=view.menu_text,
+            view=view
+        )
 
 
 

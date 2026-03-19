@@ -24,7 +24,7 @@ class PacksMenuView(BaseView):
         from bot.views.packs_mypacks_menu import PacksListView
         from bot.states.pack_view_state import register_pack_view
         packs = await fetchOwnPacks(interaction.user.id)
-        view = PacksListView(packs)
+        view = PacksListView(packs, interaction)
         register_pack_view(interaction.user.id, view)
         await self.goto(interaction, view)
 
