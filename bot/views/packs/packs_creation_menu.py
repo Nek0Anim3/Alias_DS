@@ -42,13 +42,13 @@ class CreatePackMenu(BaseView):
 
         await addPack(data.get("pack_name"), words, interaction.user.id)#Виклик БД
 
-        from bot.views.packs_menu import PacksMenuView
+        from bot.views.packs.packs_menu import PacksMenuView
         await self.goto(interaction, PacksMenuView())
 
     @discord.ui.button(label="Назад", style=discord.ButtonStyle.danger, row=4)
     async def cancel(self, button: discord.ui.Button, interaction: discord.Interaction):
         from bot.states.states import clear_state
-        from bot.views.packs_menu import PacksMenuView
+        from bot.views.packs.packs_menu import PacksMenuView
 
         clear_state(interaction.user.id)
         view = PacksMenuView()

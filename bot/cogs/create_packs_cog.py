@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 from bot.states.states import States, get_state, set_state, update_data, get_data
-from bot.views.packs_creation_menu import CreatePackMenu
+from bot.views.packs.packs_creation_menu import CreatePackMenu
 
 class CreatePacksCog(commands.Cog):
     def __init__(self, bot):

@@ -14,7 +14,7 @@ class MainMenuView(BaseView):
 
     @discord.ui.button(label="Створити Лобі", style=discord.ButtonStyle.primary, row=0)
     async def open_lobby(self, button: discord.ui.Button, interaction: discord.Interaction):
-        from bot.views.lobby_menu import LobbyMenuView
+        from bot.views.lobby.lobby_menu import LobbyMenuView
         await  createLobbyDB(interaction.user.id, interaction.user.name)
         code = await getLobbyCode(interaction.user.id)
         view = LobbyMenuView(code=code, uname=interaction.user.name, player_count=1, players=[interaction.user.name], interaction=interaction)
@@ -31,7 +31,7 @@ class MainMenuView(BaseView):
 
     @discord.ui.button(label="Набори слів", style=discord.ButtonStyle.secondary, row=1)
     async def open_packs(self, button: discord.ui.Button, interaction: discord.Interaction):
-        from bot.views.packs_menu import PacksMenuView
+        from bot.views.packs.packs_menu import PacksMenuView
         await self.goto(interaction, PacksMenuView())
 
     @discord.ui.button(label="Правила", style=discord.ButtonStyle.secondary, row=1)

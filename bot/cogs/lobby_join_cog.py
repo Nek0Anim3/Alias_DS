@@ -1,7 +1,6 @@
 import discord
 from discord.ext import commands
-from bot.states.states import States, get_state, set_state, update_data, get_data, clear_state
-from bot.views.lobby_player_menu import LobbyClientView
+from bot.states.states import States, get_state, clear_state
 from db.lobbyHandle import joinLobbyDB, findLobbyByCode
 
 

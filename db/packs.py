@@ -11,6 +11,15 @@ async def addPack(packname: str, words: list, uid: int):
     })
     print("PACKS: Створений набір слів ", packname)
 
+async def removePack(packname: str, uid: int):
+    db = get_Db()
+    col = db.get_collection('packs')
+    doc = await col.find_one({"name": packname})
+    if doc["uid"] == uid:
+        await col.delete_one({"name": packname})
+        print("PACKS: Removed pack ", packname)
+        return
+
 
 async def getPackById(packname: str):
     docName = None

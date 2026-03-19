@@ -3,7 +3,7 @@
 from bot.views.base import BaseView
 import discord
 
-from bot.views.lobby_player_menu import LobbyClientView
+from bot.views.lobby.lobby_player_menu import LobbyClientView
 
 
 

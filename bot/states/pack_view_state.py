@@ -1,4 +1,4 @@
-from bot.views.packs_mypacks_menu import PacksListView
+from bot.views.packs.packs_mypacks_menu import PacksListView
 
 active_pack_views: dict[int, "PacksListView"] = {}
 

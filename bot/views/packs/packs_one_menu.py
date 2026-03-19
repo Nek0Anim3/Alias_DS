@@ -1,6 +1,10 @@
 from bot.states.pack_view_state import get_pack_view
 from bot.views.base import BaseView
 import discord
+
+from db.packs import removePack
+
+
 class PackDescriptionMenu(BaseView):
     def __init__(self, pack_name: str, words: list, word_count: int):
         self.pack_name = pack_name
@@ -17,6 +21,20 @@ class PackDescriptionMenu(BaseView):
             f"Слів: {len(self.words)}\n"
             f"{words_str}\n"
         )
+
+    @discord.ui.button(label="Видалити", style=discord.ButtonStyle.danger, row=0)
+    async def remove_pack(self, button: discord.ui.Button, interaction: discord.Interaction):
+        await removePack(self.pack_name, interaction.user.id)
+
+        from bot.states.pack_view_state import unregister_pack_view
+        from bot.views.packs.packs_menu import PacksMenuView
+        view = PacksMenuView()
+        await interaction.response.edit_message(
+            content=view.menu_text,
+            view=view
+        )
+        unregister_pack_view(interaction.user.id)
+
 
     @discord.ui.button(label="Назад", style=discord.ButtonStyle.secondary, row=0)
     async def back_btn(self, button: discord.ui.Button, interaction: discord.Interaction):

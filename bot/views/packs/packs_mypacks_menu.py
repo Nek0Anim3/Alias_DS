@@ -7,7 +7,7 @@ from bot.views.base import BaseView
 
 class PacksListView(BaseView):
     def __init__(self, packs: list[dict], interaction: discord.Interaction):
-        from bot.views.packs_menu import PacksMenuView
+        from bot.views.packs.packs_menu import PacksMenuView
         self.menu_text = "Твої набори:" if packs else "Немає створених наборів"
         self.interaction = interaction
         super().__init__(back_view=None)
@@ -27,7 +27,7 @@ class PackButton(discord.ui.Button):
         self.pack = pack
 
     async def callback(self, interaction: discord.Interaction):
-        from bot.views.packs_one_menu import PackDescriptionMenu
+        from bot.views.packs.packs_one_menu import PackDescriptionMenu
         view = PackDescriptionMenu(
             pack_name=self.pack['name'],
             words=self.pack['words'],
@@ -52,7 +52,7 @@ class BackButton(discord.ui.Button):
 
     async def callback(self, interaction: discord.Interaction):
         from bot.states.pack_view_state import unregister_pack_view
-        from bot.views.packs_menu import PacksMenuView
+        from bot.views.packs.packs_menu import PacksMenuView
         unregister_pack_view(interaction.user.id)
         view = PacksMenuView()
         await interaction.response.edit_message(

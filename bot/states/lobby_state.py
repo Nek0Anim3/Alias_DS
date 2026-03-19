@@ -1,4 +1,4 @@
-from bot.views.lobby_menu import LobbyMenuView
+from bot.views.lobby.lobby_menu import LobbyMenuView
 
 active_lobbys: dict[int, dict[int, "LobbyMenuView"]] = {}
 
