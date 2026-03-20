@@ -38,3 +38,12 @@ async def fetchOwnPacks(uid: int):
     async for doc in docs:
         packs.append(doc)
     return packs
+
+async def fetchAllPacks():
+    db = get_Db()
+    col = db.get_collection('packs')
+    docs = col.find({})
+    packs = []
+    async for doc in docs:
+        packs.append(doc)
+    return packs

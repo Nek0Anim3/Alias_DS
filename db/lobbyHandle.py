@@ -96,3 +96,8 @@ async def getLobbyCode(host_id: int):
     col = db.get_collection('lobbys')
     lobby = await col.find_one({"host": host_id})
     return lobby['code']
+
+async def updatePackInLobby(uid: int, pack_name: str):
+    db = get_Db()
+    col = db.get_collection('lobbys')
+    await col.update_one({"host": uid}, {"$set": {'pack': pack_name}})
