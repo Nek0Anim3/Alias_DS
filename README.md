@@ -5,7 +5,7 @@ Currently i'm planning only a few features, but maybe in future i will add more 
 | Feature | Is is done? |
 |---|---|
 | Lobby System (may contain bugs) | Join ✅ / Leave ✅ / Create ✅ / Remove ✅ |
-| Packs System | Create ✅ / Remove not yet |
+| Packs System | Create ✅ / Remove ✅ |
 | Game Rounds | Not yet |
 | Leaderboard | Not yet |
 | Admin settings | Not yet |
