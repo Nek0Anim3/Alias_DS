@@ -33,8 +33,7 @@ class LobbyMenuView(BaseView):
         )
 
 
-    async def refreshLobby(self, player_count: int = None, players: list = None, pack_name: str = None): #не забути про те, що тут метод повинен оновлювати ще список гравців
-        #ще можна копіпаст цього методу для інших менюшок де це реально буде необхідно в реалтаймі
+    async def refreshLobby(self, player_count: int = None, players: list = None, pack_name: str = None):
         if player_count is not None:
             self.player_count = player_count
         if players is not None:
