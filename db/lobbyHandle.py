@@ -20,10 +20,12 @@ async def createLobbyDB(uid: int, name: str):
             "status": "waiting",
             "players": [uid],
             "player_names": [name],
-            "pack": "none"
+            "pack": "Не обрано"
         }),
         addPlayertoDB(uid, name, uid, "host")
     )
+    lobby: dict = await col.find_one({"host": uid})
+    return lobby
 
 async def deleteLobbyDB(uid: int):
     db = get_Db()

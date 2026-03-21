@@ -4,7 +4,7 @@ from bot.views.base import BaseView
 import discord
 
 
-from db.lobbyHandle import leaveLobbyDB
+from db.lobbyHandle import leaveLobbyDB, findLobbyByCode
 from db.userHandle import removePlayerfromDB
 
 
@@ -34,7 +34,8 @@ class LobbyClientView(BaseView):
             leaveLobbyDB(self.code, interaction.user.id, interaction.user.name),
             self.goto(interaction, MainMenuView())
         )
+        lobby = await findLobbyByCode(self.code)
         from bot.connectBot import get_bot
         bot = get_bot()
-        bot.dispatch("update_lobby", self.code)
+        bot.dispatch("update_lobby", lobby)
 

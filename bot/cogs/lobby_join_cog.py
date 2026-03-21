@@ -23,12 +23,12 @@ class LobbyJoinCog(commands.Cog):
             if not isJoined:
                 return
             clear_state(message.author.id)
+            lobby = await findLobbyByCode(code)
             #Оновлення менюшки для хоста лобі
             from bot.connectBot import get_bot
             bot = get_bot()
-            bot.dispatch("update_lobby", code)
+            bot.dispatch("update_lobby", lobby)
 
-            lobby = await findLobbyByCode(code)
             #Оновлення менюшки для гравця який приєднується
             from bot.states.join_state import get_join_view
             view = get_join_view(message.author.id)

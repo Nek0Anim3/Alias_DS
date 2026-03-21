@@ -1,7 +1,7 @@
 
 import discord
 
-
+from bot.states.states import clear_state
 from bot.views.base import BaseView
 from db.lobbyHandle import updatePackInLobby
 
@@ -10,7 +10,7 @@ class PacksSelectLobbyView(BaseView):
     def __init__(self, packs: list[dict], interaction: discord.Interaction, code: int) -> None:
         from bot.states.lobby_state import get_views
         self.code = code
-        view = get_views(self.code)[interaction.user.id]
+        view = get_views(interaction.user.id)
         self.menu_text = "Оберіть набір"
         self.interaction = interaction
         self.code = code
@@ -34,7 +34,8 @@ class PackButton(discord.ui.Button):
     async def callback(self, interaction: discord.Interaction):
         await updatePackInLobby(interaction.user.id, self.pack['name'])
         from bot.states.lobby_state import get_views
-        view = get_views(self.code)[interaction.user.id]
+        view = get_views(interaction.user.id)
+        clear_state(interaction.user.id)
         await view.refreshLobby(pack_name=self.pack['name'])
         await interaction.response.edit_message(
             content=view.menu_text,
@@ -54,8 +55,8 @@ class BackButton(discord.ui.Button):
 
 
     async def callback(self, interaction: discord.Interaction):
-        from bot.states.lobby_state import get_lobby_state
-        view = get_lobby_state(interaction.user.id)
+        from bot.states.lobby_state import get_views
+        view = get_views(interaction.user.id)
         await interaction.response.edit_message(
             content=view.menu_text,
             view=view

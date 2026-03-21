@@ -27,5 +27,6 @@ class States:
     PACK_WAITING_NAME = "pack_waiting_name"
     PACK_WAITING_WORDS = "pack_waiting_words"
     CODE_LOBBY_WAIT = "code_lobby_wait"
+    SELECTING_PACK = "selecting_pack"
     IN_GAME = "in_game"
     IN_GAME_BREAK = "in_game_break"
