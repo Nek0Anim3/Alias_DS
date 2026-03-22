@@ -1,5 +1,4 @@
 
-
 from bot.views.base import BaseView
 import discord
 
@@ -16,7 +15,9 @@ class JoinMenuView(BaseView):
 
     #Метод на оновлення (перехід в даному випадку до некст менюшки)
     async def joinLobbySetView(self, player_count, players, code, lobby_name):
-        view = LobbyClientView(player_count=player_count, players=players, code=code, lobby_name=lobby_name)
+        from bot.states.client_lobby_state import register_client_lobby
+        view = LobbyClientView(player_count=player_count, players=players, code=code, lobby_name=lobby_name, interaction=self.interaction)
+        register_client_lobby(self.interaction.user.id, view)
         if self.message:
             await self.interaction.edit_original_response(content=view.menu_text, view=view)
 

@@ -9,7 +9,6 @@ from db.lobbyHandle import deleteLobbyDB
 from db.packs import fetchAllPacks
 from db.userHandle import removePlayerfromDB
 
-
 class LobbyMenuView(BaseView):
     def __init__(self, uname: str, code: int, player_count: int, players: list, interaction: discord.Interaction, pack: str):
         self.uname = uname
@@ -61,6 +60,9 @@ class LobbyMenuView(BaseView):
         from bot.views.main_menu import MainMenuView
         from bot.states.lobby_state import unregister_view
         unregister_view(interaction.user.id)
+        from bot.connectBot import get_bot
+        bot = get_bot()
+        bot.dispatch("destroy_lobby", self.code)
         await asyncio.gather(
             deleteLobbyDB(interaction.user.id),
             removePlayerfromDB(interaction.user.id),
