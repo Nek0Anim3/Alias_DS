@@ -1,3 +1,5 @@
+import asyncio
+
 import discord
 from discord import slash_command
 from discord.ext import commands
@@ -5,6 +7,7 @@ from discord.ext import commands
 
 from bot.states.lobby_state import get_views
 from db.lobbyHandle import findLobbyByCode
+from db.userHandle import removePlayerfromDB
 
 
 class LobbyUpdateCog(commands.Cog):
@@ -26,7 +29,7 @@ class LobbyUpdateCog(commands.Cog):
         for player in lobby['players']:
             lobby_view = get_client_lobby(player)
             try:
-                await lobby_view.exit_lobby()
+                await asyncio.gather(lobby_view.exit_lobby(), removePlayerfromDB(player))
             except AttributeError:
                 continue
 
