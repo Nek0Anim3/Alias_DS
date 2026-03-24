@@ -54,8 +54,7 @@ class LobbyMenuView(BaseView):
         pack = await getPackByName(lobby['pack'])
         session = GameSession(words=pack['words'], players=lobby['players'], player_scores={})
         register_active_session(interaction.user.id, session)
-        view = RoundView(interaction.user.id)
-        view.wha()
+        view = RoundView(interaction.user.id, interaction)
         await self.goto(interaction, view)
 
     @discord.ui.button(label="Обрати набір", style=discord.ButtonStyle.primary, row=0)
