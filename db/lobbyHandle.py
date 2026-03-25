@@ -103,3 +103,8 @@ async def updatePackInLobby(uid: int, pack_name: str):
     db = get_Db()
     col = db.get_collection('lobbys')
     await col.update_one({"host": uid}, {"$set": {'pack': pack_name}})
+
+async def updateTeamInLobby(lobby_id: int, uid: int, team_name: str):
+    db = get_Db()
+    col = db.get_collection('lobbys')
+    await col.update_one({"host": lobby_id}, {"$push": {uid: team_name}})

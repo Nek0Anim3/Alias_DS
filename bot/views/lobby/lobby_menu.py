@@ -6,6 +6,7 @@ from bot.states.states import get_state, States
 from bot.views.base import BaseView
 from bot.views.game.round_menu import RoundView
 from bot.views.packs.pack_select_lobby import PacksSelectLobbyView
+from bot.views.teams.teams_list_menu import TeamsListView
 from db.lobbyHandle import deleteLobbyDB, findLobbyByCode
 from db.packs import fetchAllPacks, getPackByName
 from db.userHandle import removePlayerfromDB
@@ -16,6 +17,7 @@ from game.game_states import register_active_session
 class LobbyMenuView(BaseView):
     def __init__(self, uname: str, code: int, player_count: int, players: list, interaction: discord.Interaction, pack: str):
         self.uname = uname
+        self.selected_team = "Не обрана"
         self.code = code
         self.host_id = interaction.user.id
         self.player_count = player_count
@@ -29,6 +31,7 @@ class LobbyMenuView(BaseView):
         players_str = "\n".join(f"{p}" for p in self.players)
         return (
             f"Лобі {self.uname}\n"
+            f"Команда: {self.selected_team}\n"
             f"Гравців: {len(self.players)}\n"
             f"{players_str}\n"
             f"Код: {self.code}\n"
@@ -36,25 +39,32 @@ class LobbyMenuView(BaseView):
         )
 
 
-    async def refreshLobby(self, player_count: int = None, players: list = None, pack_name: str = None):
+    async def refreshLobby(self, player_count: int = None, players: list = None, pack_name: str = None, team_name: str = None):
         if player_count is not None:
             self.player_count = player_count
         if players is not None:
             self.players = players
         if pack_name is not None:
             self.pack = pack_name
+        if pack_name is not None:
+            self.selected_team = team_name
         self.menu_text = self._build_text()
         if get_state(self.host_id) != States.SELECTING_PACK:
             await self.interaction.edit_original_response(content=self.menu_text, view=self)
 
 
-    @discord.ui.button(label="Почати Гру", style=discord.ButtonStyle.primary, row=0)
+    @discord.ui.button(label="Почати Гру", style=discord.ButtonStyle.success, row=0)
     async def start_game(self, button: discord.ui.Button, interaction: discord.Interaction):
         lobby = await findLobbyByCode(self.code)
         pack = await getPackByName(lobby['pack'])
         session = GameSession(words=pack['words'], players=lobby['players'], player_scores={})
         register_active_session(interaction.user.id, session)
         view = RoundView(interaction.user.id, interaction)
+        await self.goto(interaction, view)
+
+    @discord.ui.button(label="Обрати команду", style=discord.ButtonStyle.blurple, row=0)
+    async def select_team(self, button: discord.ui.Button, interaction: discord.Interaction):
+        view = TeamsListView(interaction, self.host_id)
         await self.goto(interaction, view)
 
     @discord.ui.button(label="Обрати набір", style=discord.ButtonStyle.primary, row=0)
