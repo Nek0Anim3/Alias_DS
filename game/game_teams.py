@@ -17,5 +17,11 @@ def join_team(lobby_id: int, team_name: str, player_id: int):
     if registered_teams.get(lobby_id, None) is not None:
         if player_id not in registered_teams[lobby_id][team_name]:
             registered_teams[lobby_id][team_name].append(player_id)
+            print(registered_teams[lobby_id][team_name])
 
 
+def get_lobby_teams(lobby_id: int):
+    if lobby_id in registered_teams:
+        return registered_teams[lobby_id]
+    else:
+        return None
