@@ -23,7 +23,7 @@ class LobbyClientView(BaseView):
         players_str = "\n".join(f"{p}" for p in self.players)
         return (
             f"Хост лобі {self.lobby_name}\n"
-            f"Команда {self.team_name}"
+            f"Команда {self.team_name}\n"
             f"Гравців: {len(self.players)}\n"
             f"{players_str}\n"
             f"Очікуйте початку гри..."
@@ -31,6 +31,13 @@ class LobbyClientView(BaseView):
     async def refresh_lobby(self, team_name: str):
         self.team_name = team_name
         self.menu_text = self._build_text()
+
+    @discord.ui.button(label="Обрати команду", style=discord.ButtonStyle.primary, row=4)
+    async def select_team(self, button: discord.ui.Button, interaction: discord.Interaction):
+        lobby = await findLobbyByCode(self.code)
+        print(lobby['host'])
+        view = TeamsListView(interaction, lobby['host'], self)
+        await self.goto(interaction, view=view)
 
     @discord.ui.button(label="Вийти", style=discord.ButtonStyle.secondary, row=1)
     async def quit_lobby_client(self, button: discord.ui.Button, interaction: discord.Interaction):
@@ -46,12 +53,6 @@ class LobbyClientView(BaseView):
         from bot.connectBot import get_bot
         bot = get_bot()
         bot.dispatch("update_lobby", lobby)
-
-    @discord.ui.button(label="Обрати команду", style=discord.ButtonStyle.primary, row=4)
-    async def select_team(self, button: discord.ui.Button, interaction: discord.Interaction):
-        lobby = await findLobbyByCode(self.code)
-        view = TeamsListView(interaction, lobby['host'], self)
-        await self.interaction.edit_original_response(content=view.menu_text, view=view)
 
     async def exit_lobby(self):
         from bot.views.main_menu import MainMenuView
