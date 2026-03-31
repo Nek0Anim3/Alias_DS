@@ -4,7 +4,7 @@ from db import get_Db
 async def addPack(packname: str, words: list, uid: int):
     db = get_Db()
     col = db.get_collection('packs')
-    add = await col.insert_one({
+    await col.insert_one({
         "uid": uid,
         "name": packname,
         "words": words,
@@ -26,6 +26,15 @@ async def getPackByName(packname: str):
     col = db.get_collection('packs')
     document = await col.find_one({"name": packname})
     return document
+
+async def checkPack(packname: str):
+    db = get_Db()
+    col = db.get_collection('packs')
+    doc = await col.find_one({"name": packname})
+    if doc is not None:
+        return True
+    else:
+        return False
 
 async def fetchOwnPacks(uid: int):
     db = get_Db()

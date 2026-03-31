@@ -2,12 +2,17 @@
 import discord
 from discord.ext import commands
 
+from db.lobbyHandle import getLobbyByID
+
+
 class GameUpdateCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
     @commands.Cog.listener()
-    async def on_start_game_global(self, message: discord.Message):
+    async def on_start_game_global(self, message: discord.Message, lobby_id: int, ):
+        lobby = await getLobbyByID(lobby_id)
+        players = lobby['players']
         pass
 
     @commands.Cog.listener()

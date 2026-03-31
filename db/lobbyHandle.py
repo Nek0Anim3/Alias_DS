@@ -93,6 +93,12 @@ async def findLobbyByCode(lobby_code: int):
     else:
         return None
 
+async def getLobbyByID(host_id: int):
+    db = get_Db()
+    col = db.get_collection('lobbys')
+    lobby = await col.find_one({"host": host_id})
+    return lobby
+
 async def getLobbyCode(host_id: int):
     db = get_Db()
     col = db.get_collection('lobbys')

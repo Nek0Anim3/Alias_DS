@@ -2,7 +2,7 @@ from bot.views.lobby.lobby_player_menu import LobbyClientView
 
 active_client_lobbys: dict[int, "LobbyClientView"] = {}
 
-def register_client_lobby(uid: int ,view: "LobbyMenuView"):
+def register_client_lobby(uid: int ,view: "LobbyClientView"):
     if uid not in active_client_lobbys:
         active_client_lobbys[uid] = view
     print("CLIENT LOBBY: Registered", active_client_lobbys)
