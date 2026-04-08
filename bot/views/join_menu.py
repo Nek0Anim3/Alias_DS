@@ -1,4 +1,6 @@
 import discord
+
+
 from bot.views.base import BaseView
 from bot.views.lobby.lobby_player_menu import LobbyClientView
 
@@ -9,6 +11,7 @@ class JoinMenuView(BaseView):
         self.menu_text = "Підключення до лобі.. \nВведіть код лобі"
         self.interaction = interaction
 
+
     #Метод на оновлення (перехід в даному випадку до некст менюшки)
     async def joinLobbySetView(self, player_count, players, code, lobby_name, host_id):
         from bot.states.client_lobby_state import register_client_lobby
@@ -16,6 +19,7 @@ class JoinMenuView(BaseView):
         register_client_lobby(self.interaction.user.id, view)
         if self.message:
             await self.interaction.edit_original_response(content=view.menu_text, view=view)
+
 
     @discord.ui.button(label="Вийти", style=discord.ButtonStyle.secondary, row=4)
     async def exit_lobby(self, button: discord.ui.Button, interaction: discord.Interaction):

@@ -2,6 +2,8 @@ from cProfile import label
 from enum import Enum
 
 import discord
+from discord import Component
+
 from bot.views.base import BaseView
 from debug.DebugLogger import DebugLogger
 from game.game_states import get_active_session
@@ -19,11 +21,14 @@ class RoundView(BaseView):
         from bot.connectBot import get_bot
         self.bot = get_bot()
 
+        self.btn1 = ControlButton(interaction, type=ButtonTypes.GREEN)
+        self.btn2 = ControlButton(interaction, type=ButtonTypes.RED)
+
         super().__init__(back_view=None)
 
         if interaction.user.id == host_id:
-            self.add_item(ControlButton(interaction, type=ButtonTypes.GREEN))
-            self.add_item(ControlButton(interaction, type=ButtonTypes.RED))
+            self.add_item(self.btn1)
+            self.add_item(self.btn2)
 
     #------------------------------------------------------------------------------------ quite a long constructor method...
 
@@ -37,9 +42,13 @@ class RoundView(BaseView):
         text = self._build_text(words=self.words)
         await self.interaction.edit_original_response(content=text, view=self)
 
-    # @discord.ui.button(label="✅ Вгадав", style=discord.ButtonStyle.success, row=0)
-    # async def like_button(self, button: discord.ui.Button, interaction: discord.Interaction):
-    #     self.bot.dispatch("ui_game_update")
+
+    @discord.ui.button(label="Disable items", style=discord.ButtonStyle.primary, row=1)
+    async def disable_button(self, button: discord.ui.Button, interaction: discord.Interaction):
+
+        self.remove_item(self.btn1)
+        self.remove_item(self.btn2)
+        await self.interaction.edit_original_response(view=self, content=self.menu_text)
     #
     # @discord.ui.button(label="❎ Не вгадав", style=discord.ButtonStyle.danger, row=0)
     # async def dislike_button(self, button: discord.ui.Button, interaction: discord.Interaction):
@@ -56,10 +65,11 @@ class ControlButton(discord.ui.Button):
         else:
             super().__init__(
                     label="❎ Не вгадав",
-                    style=discord.ButtonStyle.success,
+                    style=discord.ButtonStyle.danger,
                     row=0
                 )
     async def callback(self, interaction: discord.Interaction):
+
         DebugLogger.Console("CALLBACK: Should update text")
 
 class ButtonTypes(Enum):
