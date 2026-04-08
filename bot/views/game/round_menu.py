@@ -9,8 +9,9 @@ from game.game_states import get_active_session
 
 class RoundView(BaseView):
     def __init__(self, uid: int, interaction: discord.Interaction, host_id: int):
-        self.session = get_active_session(uid)
         self.host_id = host_id
+        self.session = get_active_session(host_id)
+        self.uid = uid
         self.players, self.current_word = self.session.get_game_data()
         self.menu_text = self._build_text(words=[self.current_word])
         self.words = [self.current_word]

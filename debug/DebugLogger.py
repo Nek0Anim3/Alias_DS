@@ -1,7 +1,6 @@
 from datetime import datetime
 
 class DebugLogger:
-
     @staticmethod
     def Console(message, *args):
         time = datetime.now()

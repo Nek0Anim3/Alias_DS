@@ -35,10 +35,11 @@ class LobbyClientView(BaseView):
         self.team_name = team_name
         self.menu_text = self._build_text()
 
-    async def global_start_game(self, role: str):
-        view = RoundView(self.interaction.user.id, self.interaction)
+    async def global_start_game(self):
+        DebugLogger.Console(f"LOBBY PLAYER MENU: Creating view with {self.interaction.user.id} id, {self.interaction} interaction, host_id {self.host_id}")
+        view = RoundView(self.interaction.user.id, self.interaction, self.host_id)
         register_round_view(self.host_id, view)
-        await self.goto(self.interaction, view)
+        await self.goto_global(self.interaction, view)
 
     @discord.ui.button(label="Обрати команду", style=discord.ButtonStyle.primary, row=4)
     async def select_team(self, button: discord.ui.Button, interaction: discord.Interaction):

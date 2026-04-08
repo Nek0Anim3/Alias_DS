@@ -18,9 +18,11 @@ class GameUpdateCog(commands.Cog):
         roundView = get_round_by_lobby_id(lobby['host'])
         DebugLogger.Console("GOT ROUND VIEW:", roundView)
         for player in players:
+
             DebugLogger.Console(f"Changing view for player: {player} to Round View -> {roundView}")
             view = get_client_lobby(player)
-            await view.goto_global(interaction=view.interaction, view=roundView[-1])
+            # await view.goto_global(interaction=view.interaction, view=roundView[-1])
+            await view.global_start_game()
 
     @commands.Cog.listener()
     async def on_ui_game_update(self, message: discord.Message, lobby_id: int):
