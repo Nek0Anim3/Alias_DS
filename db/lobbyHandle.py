@@ -106,6 +106,12 @@ async def getLobbyCode(host_id: int):
     lobby = await col.find_one({"host": host_id})
     return lobby['code']
 
+async def update_status_lobby(lobby_id: int, status: str):
+    db = get_Db()
+    col = db.get_collection('lobbys')
+    await col.update_one({"host": lobby_id}, {"$set": {"status": status}})
+    DebugLogger.Console(f"MONGO: Updated status to {status}", lobby_id)
+
 async def updatePackInLobby(uid: int, pack_name: str):
     db = get_Db()
     col = db.get_collection('lobbys')

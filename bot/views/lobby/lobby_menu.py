@@ -8,7 +8,7 @@ from bot.views.game.round_menu import RoundView
 from bot.views.game.round_register import register_round_view
 from bot.views.packs.pack_select_lobby import PacksSelectLobbyView
 from bot.views.teams.teams_list_menu import TeamsListView
-from db.lobbyHandle import deleteLobbyDB, findLobbyByCode
+from db.lobbyHandle import deleteLobbyDB, findLobbyByCode, update_status_lobby
 from db.packs import fetchAllPacks, getPackByName
 from db.userHandle import removePlayerfromDB
 from game.game_session import GameSession
@@ -58,6 +58,7 @@ class LobbyMenuView(BaseView):
     @discord.ui.button(label="Почати Гру", style=discord.ButtonStyle.success, row=0)
     async def start_game(self, button: discord.ui.Button, interaction: discord.Interaction):
         lobby = await findLobbyByCode(self.code)
+        await update_status_lobby(lobby['host'], "ingame")
         pack = await getPackByName(lobby['pack'])
         teams_list = get_lobby_teams(self.host_id)
         session = GameSession(words=pack['words'], players=lobby['players'], player_scores={}, teams=teams_list)

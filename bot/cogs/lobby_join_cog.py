@@ -14,17 +14,20 @@ class LobbyJoinCog(commands.Cog):
         if message.author.bot:
             return
         if get_state(message.author.id) == States.CODE_LOBBY_WAIT:
-            code = 0
             try:
                 code = int(message.content)
             except ValueError:
                 await message.reply(content="Код повинен бути з 4 цифр")
                 return
+            lobby = await findLobbyByCode(code)
+            if lobby['status'] == "ingame":
+                await message.reply(content="Гра вже почалась")
+                return
             isJoined = await joinLobbyDB(code, message.author.id, message.author.name)
             if not isJoined:
                 return
             clear_state(message.author.id)
-            lobby = await findLobbyByCode(code)
+
             #Оновлення менюшки для хоста лобі
             from bot.connectBot import get_bot
             bot = get_bot()
