@@ -1,19 +1,22 @@
 from random import randint
-
+import asyncio
 from debug.DebugLogger import DebugLogger
-
+from bot.connectBot import get_bot
 
 class GameSession:
-    def __init__(self, words: list, players, player_scores: dict, teams: dict):
+    def __init__(self, words: list, players, player_scores: dict, teams: dict, lobby_id: int):
+        self.lobby_id = lobby_id
         self.words = words
         self.players = players
         self.teams = teams
         self.player_scores = player_scores
         self.current_word = self.get_random_word("")
+        self.bot = get_bot()
     def get_game_data(self):
         return self.players, self.current_word
 
     def start_round(self):
+
         pass
 
     def update_player_scores(self, uid: int, status: bool):
@@ -43,5 +46,10 @@ class GameSession:
                 return word
 
 
-    async def start_timer(self):
-        pass
+    async def start_timer(self, base_time):
+        while base_time > 0:
+            DebugLogger.Console(f"TIMER: Left {base_time} seconds")
+            self.bot.dispatch("update_timer", lobby_id=self.lobby_id, base_time=base_time)
+            base_time -= 5
+            await asyncio.sleep(5)
+        DebugLogger.Console(f"TIMER: END TIME")

@@ -61,14 +61,14 @@ class LobbyMenuView(BaseView):
         await update_status_lobby(lobby['host'], "ingame")
         pack = await getPackByName(lobby['pack'])
         teams_list = get_lobby_teams(self.host_id)
-        session = GameSession(words=pack['words'], players=lobby['players'], player_scores={}, teams=teams_list)
+        session = GameSession(words=pack['words'], players=lobby['players'], player_scores={}, teams=teams_list, lobby_id=lobby['host'])
         register_active_session(interaction.user.id, session)
         view = RoundView(interaction.user.id, interaction, interaction.user.id, 60) #ТАЙМЕР ЗАГЛУШКА
         register_round_view(interaction.user.id, view)
         from bot.connectBot import get_bot
         bot = get_bot()
         bot.dispatch("start_game_global", lobby)
-        await self.goto(interaction, view)
+        await asyncio.gather(session.start_timer(base_time=lobby['timer']), self.goto(interaction, view))
 
     @discord.ui.button(label="Обрати команду", style=discord.ButtonStyle.primary, row=0)
     async def select_team(self, button: discord.ui.Button, interaction: discord.Interaction):

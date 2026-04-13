@@ -21,7 +21,8 @@ async def createLobbyDB(uid: int, name: str):
             "status": "waiting",
             "players": [uid],
             "player_names": [name],
-            "pack": "Не обрано"
+            "pack": "Не обрано",
+            "timer": 60
         }),
         addPlayertoDB(uid, name, uid, "host")
     )

@@ -34,6 +34,13 @@ class GameUpdateCog(commands.Cog):
             await lobby.update_text(next_word)
             DebugLogger.Console(f"UPDATE GAME: Changing text for lobby: {lobby}")
 
+    @commands.Cog.listener()
+    async def on_update_timer(self, lobby_id: int, base_time: int):
+        lobbies = get_round_by_lobby_id(lobby_id)
+        for lobby in lobbies:
+            lobby.time = base_time
+            await lobby.update_text()
+
 
 def setup(bot: commands.Bot):
     bot.add_cog(GameUpdateCog(bot))

@@ -42,9 +42,10 @@ class RoundView(BaseView):
 
         return f"{words_str} <-\n------------------\nЗалишилось {self.time}с"
 
-    async def update_text(self, word):
-        self.words.append(word)
-        self.current_word = word
+    async def update_text(self, word = None):
+        if word is not None:
+            self.words.append(word)
+            self.current_word = word
         if self.uid != self.host_id:
             words_str = "\n".join(f"{w}" for w in self.words[:-1])
         else:
@@ -62,7 +63,6 @@ class RoundView(BaseView):
             case RoleTypes.MEMBER:
                 self.remove_item(self.btn1)
                 self.remove_item(self.btn2)
-
                 DebugLogger.Console(f"ROUNDS: Removing button from {self.uid}")
 
 class ControlButton(discord.ui.Button):
