@@ -37,7 +37,7 @@ class LobbyClientView(BaseView):
 
     async def global_start_game(self):
         DebugLogger.Console(f"LOBBY PLAYER MENU: Creating view with {self.interaction.user.id} id, {self.interaction} interaction, host_id {self.host_id}")
-        view = RoundView(self.interaction.user.id, self.interaction, self.host_id)
+        view = RoundView(self.interaction.user.id, self.interaction, self.host_id, 60) #ТАЙМЕР ЗАГЛУШКА
         register_round_view(self.host_id, view)
         await self.goto_global(self.interaction, view)
 

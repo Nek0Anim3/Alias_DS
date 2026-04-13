@@ -10,39 +10,46 @@ from game.game_states import get_active_session
 
 
 class RoundView(BaseView):
-    def __init__(self, uid: int, interaction: discord.Interaction, host_id: int):
+    def __init__(self, uid: int, interaction: discord.Interaction, host_id: int, timer: int):
+        from bot.connectBot import get_bot
+        self.bot = get_bot()
         self.host_id = host_id
 
         self.session = get_active_session(host_id)
         self.uid = uid
         self.players, self.current_word = self.session.get_game_data()
-        self.menu_text = self._build_text(words=[self.current_word])
         self.words = [self.current_word]
+        self.menu_text = "-"
         self.interaction = interaction
-        from bot.connectBot import get_bot
-        self.bot = get_bot()
+        self.time = timer
 
         #Initial UI init for HOST!
-
-        self.btn1 = ControlButton(interaction, type=ButtonTypes.GREEN)
-        self.btn2 = ControlButton(interaction, type=ButtonTypes.RED)
-
+        self.btn1 = ControlButton(interaction=interaction, type=ButtonTypes.GREEN, view=self)
+        self.btn2 = ControlButton(interaction=interaction, type=ButtonTypes.RED, view=self)
+        self.menu_text = f"---"
         super().__init__(back_view=None)
+
+
 
         if interaction.user.id == host_id:
             self.add_item(self.btn1)
             self.add_item(self.btn2)
+            self.menu_text = f"{self.current_word} <-"
 
     #------------------------------------------------------------------------------------ quite a long constructor method...
 
-    def _build_text(self, words):
-        words_str = "\n".join(f"{w}" for w in words[:-1])
-        return f"{words_str} <-"
+    def _build_text(self, words_str):
 
-    async def update_text(self):
-        word = self.session.get_random_word(self.current_word)
+        return f"{words_str} <-\n------------------\nЗалишилось {self.time}с"
+
+    async def update_text(self, word):
         self.words.append(word)
-        text = self._build_text(words=self.words)
+        self.current_word = word
+        if self.uid != self.host_id:
+            words_str = "\n".join(f"{w}" for w in self.words[:-1])
+        else:
+            words_str = "\n".join(f"{w}" for w in self.words)
+        text = self._build_text(words_str)
         await self.interaction.edit_original_response(content=text, view=self)
 
 
@@ -55,18 +62,16 @@ class RoundView(BaseView):
             case RoleTypes.MEMBER:
                 self.remove_item(self.btn1)
                 self.remove_item(self.btn2)
+
                 DebugLogger.Console(f"ROUNDS: Removing button from {self.uid}")
 
-    @discord.ui.button(label="Disable items", style=discord.ButtonStyle.primary, row=1)
-    async def disable_button(self, button: discord.ui.Button, interaction: discord.Interaction):
-
-        self.remove_item(self.btn1)
-        self.remove_item(self.btn2)
-        await self.interaction.edit_original_response(view=self, content=self.menu_text)
-
 class ControlButton(discord.ui.Button):
-    def __init__(self, interaction: discord.Interaction, type: ButtonTypes):
+    def __init__(self, interaction: discord.Interaction, type: ButtonTypes, view):
+        from bot.connectBot import get_bot
+        self._view = view
+        self.bot = get_bot()
         if type == ButtonTypes.GREEN:
+
             super().__init__(
                     label="✅ Вгадав",
                     style=discord.ButtonStyle.success,
@@ -78,8 +83,9 @@ class ControlButton(discord.ui.Button):
                     style=discord.ButtonStyle.danger,
                     row=0
                 )
+
     async def callback(self, interaction: discord.Interaction):
-        DebugLogger.Console("CALLBACK: Should update text")
+        self.bot.dispatch("update_text", self._view.message, self._view.host_id, self._view.session)
 
 class ButtonTypes(Enum):
     GREEN = 1

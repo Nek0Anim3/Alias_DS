@@ -3,8 +3,10 @@ import discord
 from discord.ext import commands
 
 from bot.states.client_lobby_state import get_client_lobby
+from bot.views.game.round_menu import RoundView
 from bot.views.game.round_register import get_round_by_lobby_id
 from debug.DebugLogger import DebugLogger
+from game.game_session import GameSession
 
 
 class GameUpdateCog(commands.Cog):
@@ -25,8 +27,12 @@ class GameUpdateCog(commands.Cog):
             await view.global_start_game()
 
     @commands.Cog.listener()
-    async def on_ui_game_update(self, message: discord.Message, lobby_id: int):
-        pass
+    async def on_update_text(self, message: discord.Message, lobby_id: int, session: GameSession):
+        lobbies = get_round_by_lobby_id(lobby_id)
+        next_word = session.get_random_word(lobbies[0].current_word)
+        for lobby in lobbies:
+            await lobby.update_text(next_word)
+            DebugLogger.Console(f"UPDATE GAME: Changing text for lobby: {lobby}")
 
 
 def setup(bot: commands.Bot):

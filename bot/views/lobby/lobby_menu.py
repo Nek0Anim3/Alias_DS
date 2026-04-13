@@ -63,7 +63,7 @@ class LobbyMenuView(BaseView):
         teams_list = get_lobby_teams(self.host_id)
         session = GameSession(words=pack['words'], players=lobby['players'], player_scores={}, teams=teams_list)
         register_active_session(interaction.user.id, session)
-        view = RoundView(interaction.user.id, interaction, interaction.user.id)
+        view = RoundView(interaction.user.id, interaction, interaction.user.id, 60) #ТАЙМЕР ЗАГЛУШКА
         register_round_view(interaction.user.id, view)
         from bot.connectBot import get_bot
         bot = get_bot()
