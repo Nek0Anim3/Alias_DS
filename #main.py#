@@ -11,12 +11,14 @@ async def main():
         db.connect_Db(),
         flushDb(),
         flushPlayersDB(),
-        connectBot.start_bot())
-
+        connectBot.start_bot()
+    )
+        
     
 if __name__ == "__main__":
     try:
         asyncio.run(main())
     except KeyboardInterrupt:
         print("Stopped")
+    
 
