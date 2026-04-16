@@ -12,20 +12,12 @@ class GameSession:
         self.player_scores = player_scores
         self.current_word = self.get_random_word("")
         self.bot = get_bot()
-        self.round_counter = 0
-    #----------------------------------------
-
-    def shuffle_players(players: list):
-
-        pass
-        #transpose matrix
-
     def get_game_data(self):
         return self.players, self.current_word
 
     def start_round(self):
 
-        self.bot.dispatch("start_round")
+        pass
 
     def update_player_scores(self, uid: int, status: bool):
         if self.player_scores[uid] == 0:
@@ -34,7 +26,6 @@ class GameSession:
             self.player_scores[uid] += 1
         else:
             self.player_scores[uid] -= 1
-
 
     def get_random_word(self, word):
         rand_index = randint(0, len(self.words) - 1)
@@ -56,12 +47,9 @@ class GameSession:
 
 
     async def start_timer(self, base_time):
-        DebugLogger.Console(f"Teams list: {self.teams}")
-
-        while base_time >= 0:
+        while base_time > 0:
             DebugLogger.Console(f"TIMER: Left {base_time} seconds")
             self.bot.dispatch("update_timer", lobby_id=self.lobby_id, base_time=base_time)
             base_time -= 5
             await asyncio.sleep(5)
-        self.bot.dispatch("update_timer", lobby_id=self.lobby_id, base_time=base_time)
         DebugLogger.Console(f"TIMER: END TIME")
