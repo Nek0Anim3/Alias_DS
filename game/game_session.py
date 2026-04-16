@@ -16,7 +16,7 @@ class GameSession:
         return self.players, self.current_word
 
     def start_round(self):
-        #ddasdasd
+
         pass
 
     def update_player_scores(self, uid: int, status: bool):
