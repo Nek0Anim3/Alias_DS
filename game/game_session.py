@@ -64,18 +64,18 @@ class GameSession:
 
 #-----
     def shuffle_players_list(self, players: dict):
-        test_list = [['Jake', 'Diana'], ['Bob', 'Mike'], ['Celestia', 'Andrew', 'Timurka'], ['Gekidzo', 'Bogdan', 'Kirill', 'Nicolay']]
+        player_list = [['Jake', 'Diana'], ['Bob', 'Mike'], ['Celestia', 'Andrew', 'Timurka'], ['Gekidzo', 'Bogdan', 'Kirill', 'Nicolay']]
 
-        #player_list = list(players.values())
+        max_len = max(len(el) for el in player_list)
+        for el in player_list:
+            if len(el) < max_len:
+                el += '0' * (max_len - len(el))
+                DebugLogger.Console(f"GAME SESSION [SHUFFLE PLAYERS]: Appended elements to EL: {el}")
 
-        transposed_list = list(map(list, zip(*test_list)))
-        flat_list = [item for sublist in transposed_list for item in sublist]
+        DebugLogger.Console(f"GAME SESSION player List Modified ->: {player_list} ")
 
-        #FIX ADD LEADING 0 ZAGLUSHKA PNG
+        transposed_list = list(map(list, zip(*player_list)))
+        flat_list = [item for sublist in transposed_list for item in sublist if item != '0']
+        DebugLogger.Console(f"GAME SESSION flat list test: {flat_list}")
 
-        #[[Jake, Alice, Cole], [Bob, Mike, Paimon], [Celestia, Andrew, Timurka], [Gekidzo, Bogdan, Kirill]
-        #DebugLogger.Console(f"---SHUFFLE PLAYERS---\n player_list = bebebe \n Typeof player_list = {type(player_list)},\n Transposed_list = {transposed_list},\n flat = {flat_list}")
-        DebugLogger.Console(f"FLAT LIST TEST: {flat_list}")
-
-
-
+        return flat_list
