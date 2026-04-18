@@ -61,7 +61,7 @@ class LobbyMenuView(BaseView):
         await update_status_lobby(lobby['host'], "ingame")
         pack = await getPackByName(lobby['pack'])
         teams_list = get_lobby_teams(self.host_id)
-        session = GameSession(words=pack['words'], players=lobby['players'], player_scores={}, teams=teams_list, lobby_id=lobby['host'])
+        session = GameSession(words=pack['words'],players=lobby['players'], player_scores={}, teams=teams_list, lobby_id=lobby['host']) #players=lobby['players']
         register_active_session(interaction.user.id, session)
         view = RoundView(interaction.user.id, interaction, interaction.user.id, 60) #ТАЙМЕР ЗАГЛУШКА
         register_round_view(interaction.user.id, view)

@@ -11,7 +11,7 @@ def register_team(lobby_id: int, team_name: str, players: list[int]):
             DebugLogger.Console("Added team " + team_name)
             DebugLogger.Console("All teams in lobby: ", registered_teams[lobby_id])
     else:
-        registered_teams.update({lobby_id: {team_name: [players]}})
+        registered_teams.update({lobby_id: {team_name: players}})
         DebugLogger.Console(f"Registered team {registered_teams}.")
     return
 
@@ -31,6 +31,5 @@ def get_lobby_teams(lobby_id: int):
     if lobby_id in registered_teams:
         DebugLogger.Console(f"get_lobby_teams DEBUG: {registered_teams[lobby_id]}.")
         return registered_teams[lobby_id]
-
     else:
         return {}

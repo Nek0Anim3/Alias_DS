@@ -12,8 +12,15 @@ class GameSession:
         self.player_scores = player_scores
         self.current_word = self.get_random_word("")
         self.bot = get_bot()
+        DebugLogger.Console(f"Game session inited: Teams debug list = {self.teams}")
+#---------------------------------------------------
+
     def get_game_data(self):
-        return self.players, self.current_word
+        #zaglushka
+        self.shuffle_players_list(self.teams)
+        return self.current_word, self.teams
+
+
 
     def start_round(self):
 
@@ -52,4 +59,23 @@ class GameSession:
             self.bot.dispatch("update_timer", lobby_id=self.lobby_id, base_time=base_time)
             base_time -= 5
             await asyncio.sleep(5)
+        self.bot.dispatch("update_timer", lobby_id=self.lobby_id, base_time=base_time)
         DebugLogger.Console(f"TIMER: END TIME")
+
+#-----
+    def shuffle_players_list(self, players: dict):
+        test_list = [['Jake', 'Diana'], ['Bob', 'Mike'], ['Celestia', 'Andrew', 'Timurka'], ['Gekidzo', 'Bogdan', 'Kirill', 'Nicolay']]
+
+        #player_list = list(players.values())
+
+        transposed_list = list(map(list, zip(*test_list)))
+        flat_list = [item for sublist in transposed_list for item in sublist]
+
+        #FIX ADD LEADING 0 ZAGLUSHKA PNG
+
+        #[[Jake, Alice, Cole], [Bob, Mike, Paimon], [Celestia, Andrew, Timurka], [Gekidzo, Bogdan, Kirill]
+        #DebugLogger.Console(f"---SHUFFLE PLAYERS---\n player_list = bebebe \n Typeof player_list = {type(player_list)},\n Transposed_list = {transposed_list},\n flat = {flat_list}")
+        DebugLogger.Console(f"FLAT LIST TEST: {flat_list}")
+
+
+

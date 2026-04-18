@@ -4,7 +4,7 @@ from discord.ext import commands
 
 from bot.states.client_lobby_state import get_client_lobby
 from bot.views.game.round_menu import RoundView
-from bot.views.game.round_register import get_round_by_lobby_id
+from bot.views.game.round_register import get_round_by_lobby_id, debug_round_listviews
 from debug.DebugLogger import DebugLogger
 from game.game_session import GameSession
 
@@ -18,9 +18,12 @@ class GameUpdateCog(commands.Cog):
         players = lobby['players']
         del players[0] #ain't that cool? Deletes HOST id from players list, because otherwise .get method just returns blank {} instead of LobbyClientView
         roundView = get_round_by_lobby_id(lobby['host'])
+        #debugs
         DebugLogger.Console("GOT ROUND VIEW:", roundView)
-        for player in players:
+        debug_round_listviews()
 
+        for player in players:
+            #Change view to game ui for all players in lobby
             DebugLogger.Console(f"Changing view for player: {player} to Round View -> {roundView}")
             view = get_client_lobby(player)
             # await view.goto_global(interaction=view.interaction, view=roundView[-1])
