@@ -11,8 +11,9 @@ from bot.views.teams.teams_list_menu import TeamsListView
 from db.lobbyHandle import deleteLobbyDB, findLobbyByCode, update_status_lobby
 from db.packs import fetchAllPacks, getPackByName
 from db.userHandle import removePlayerfromDB
+from game.game_manager import GameManager
 from game.game_session import GameSession
-from game.game_states import register_active_session
+from game.game_registry import register_active_session, register_game_manager
 from game.game_teams import get_lobby_teams
 
 
@@ -38,6 +39,7 @@ class LobbyMenuView(BaseView):
             f"{players_str}\n"
             f"Код: {self.code}\n"
             f"Набір слів: {self.pack}\n"
+            f"Таймер раунду: 60с (WIP)"
         )
 
 
@@ -61,14 +63,21 @@ class LobbyMenuView(BaseView):
         await update_status_lobby(lobby['host'], "ingame")
         pack = await getPackByName(lobby['pack'])
         teams_list = get_lobby_teams(self.host_id)
+
+        #reg session and manager
         session = GameSession(words=pack['words'],players=lobby['players'], player_scores={}, teams=teams_list, lobby_id=lobby['host']) #players=lobby['players']
         register_active_session(interaction.user.id, session)
-        view = RoundView(interaction.user.id, interaction, interaction.user.id, 60) #ТАЙМЕР ЗАГЛУШКА
-        register_round_view(interaction.user.id, view)
+
+        game_manager = GameManager(session, self.host_id)
+        register_game_manager(self.host_id, game_manager)
+
+        # view = RoundView(interaction.user.id, interaction, interaction.user.id, 60) #ТАЙМЕР ЗАГЛУШКА
+        # register_round_view(interaction.user.id, interaction.user.id, view) #lobbyid, uid, view
+
         from bot.connectBot import get_bot
         bot = get_bot()
-        bot.dispatch("start_game_global", lobby)
-        await asyncio.gather(session.start_timer(base_time=lobby['timer']), self.goto(interaction, view))
+        bot.dispatch("start_game_global", game_manager)
+        # await asyncio.gather(session.start_timer(base_time=lobby['timer']), self.goto(interaction, view))
 
     @discord.ui.button(label="Обрати команду", style=discord.ButtonStyle.primary, row=0)
     async def select_team(self, button: discord.ui.Button, interaction: discord.Interaction):

@@ -13,13 +13,6 @@ class GameSession:
         self.current_word = self.get_random_word("")
         self.bot = get_bot()
         DebugLogger.Console(f"Game session inited: Teams debug list = {self.teams}")
-#---------------------------------------------------
-
-    def get_game_data(self):
-        #zaglushka
-        self.shuffle_players_list(self.teams)
-        return self.current_word, self.teams
-
 
 
     def start_round(self):
@@ -62,9 +55,21 @@ class GameSession:
         self.bot.dispatch("update_timer", lobby_id=self.lobby_id, base_time=base_time)
         DebugLogger.Console(f"TIMER: END TIME")
 
-#-----
+#-------------------------
+    def set_player_roles(self, players: list, current_leader: int):
+        player_roles = {}
+        for player in players:
+            if player == current_leader:
+                DebugLogger.Console(f"if player == current_leader: {player} setting role to LEADER")
+                player_roles[player] = "leader"
+            else:
+                DebugLogger.Console(f"ELSE PLAYER not equal: {player} setting to PLAYER")
+                player_roles[player] = "player"
+        DebugLogger.Console(f"SET PLAYER ROLES: {player_roles}")
+        return player_roles
+
     def shuffle_players_list(self, players: dict):
-        player_list = [['Jake', 'Diana'], ['Bob', 'Mike'], ['Celestia', 'Andrew', 'Timurka'], ['Gekidzo', 'Bogdan', 'Kirill', 'Nicolay']]
+        player_list = list(players.values()) #[['Jake', 'Diana'], ['Bob', 'Mike'], ['Celestia', 'Andrew', 'Timurka'], ['Gekidzo', 'Bogdan', 'Kirill', 'Nicolay']]
 
         max_len = max(len(el) for el in player_list)
         for el in player_list:

@@ -3,9 +3,12 @@ import discord
 from discord.ext import commands
 
 from bot.states.client_lobby_state import get_client_lobby
+from bot.states.lobby_state import get_hostLobby_view
+from bot.views import lobby
 from bot.views.game.round_menu import RoundView
 from bot.views.game.round_register import get_round_by_lobby_id, debug_round_listviews
 from debug.DebugLogger import DebugLogger
+from game.game_manager import GameManager
 from game.game_session import GameSession
 
 
@@ -14,25 +17,39 @@ class GameUpdateCog(commands.Cog):
         self.bot = bot
 
     @commands.Cog.listener()
-    async def on_start_game_global(self, lobby):
-        players = lobby['players']
-        del players[0] #ain't that cool? Deletes HOST id from players list, because otherwise .get method just returns blank {} instead of LobbyClientView
-        roundView = get_round_by_lobby_id(lobby['host'])
-        #debugs
-        DebugLogger.Console("GOT ROUND VIEW:", roundView)
-        debug_round_listviews()
+    async def on_start_game_global(self, game_manager: GameManager):
+        roles = game_manager.player_roles
+        for uid in game_manager.game_session.players:
+            if uid == game_manager.lobby_id:
+                player_view = get_hostLobby_view(game_manager.lobby_id)
+            else:
+                player_view = get_client_lobby(uid)
+            view = RoundView(game_manager.lobby_id, roles[uid], uid)
+            await player_view.goto_global(view=view)
 
-        for player in players:
-            #Change view to game ui for all players in lobby
-            DebugLogger.Console(f"Changing view for player: {player} to Round View -> {roundView}")
-            view = get_client_lobby(player)
-            # await view.goto_global(interaction=view.interaction, view=roundView[-1])
-            await view.global_start_game()
+            DebugLogger.Console(f"GAME START GAME ROLE: {roles[uid]}")
+        # players = lobby['players']
+        # del players[0] #ain't that cool? Deletes HOST id from players list, because otherwise .get method just returns blank {} instead of LobbyClientView
+        # roundView = get_round_by_lobby_id(lobby['host'])
+        # #debugs
+        # DebugLogger.Console("GOT ROUND VIEW:", roundView)
+        # debug_round_listviews()
+        #
+        # for player in players:
+        #     #Change view to game ui for all players in lobby
+        #     DebugLogger.Console(f"Changing view for player: {player} to Round View -> {roundView}")
+        #     view = get_client_lobby(player)
+        #     # await view.goto_global(interaction=view.interaction, view=roundView[-1])
+        #     # await view.global_start_game()
+
 
     @commands.Cog.listener()
-    async def on_update_text(self, message: discord.Message, lobby_id: int, session: GameSession):
-        lobbies = get_round_by_lobby_id(lobby_id)
-        next_word = session.get_random_word(lobbies[0].current_word)
+    async def on_start_round_ui(self, players, roles, word):
+        view = RoundView()
+    @commands.Cog.listener()
+    async def on_update_text(self, message: discord.Message, state: str):
+
+
         for lobby in lobbies:
             await lobby.update_text(next_word)
             DebugLogger.Console(f"UPDATE GAME: Changing text for lobby: {lobby}")

@@ -13,5 +13,5 @@ def unregister_hostLobby_view(uid: int):
         DebugLogger.Console("LOBBY STATE: Poped active lobby with UID, ", uid)
         active_lobbys.pop(uid)
 
-def get_hostLobby_view(uid: int):
+def get_hostLobby_view(uid: int) -> "LobbyMenuView":
     return active_lobbys.get(uid, {})
