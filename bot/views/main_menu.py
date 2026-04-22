@@ -1,5 +1,6 @@
 import discord
 import bot.states.lobby_state as lobby_state
+from bot.states.interactions_state import save_interaction
 from bot.states.join_state import register_join_view
 from bot.states.states import set_state, States
 from bot.views.base import BaseView
@@ -25,6 +26,7 @@ class MainMenuView(BaseView):
             pack=lobby['pack'])
         lobby_state.register_hostLobby_view(interaction.user.id, view)
         await self.goto(interaction, view)
+        save_interaction(interaction.user.id, interaction)
 
     @discord.ui.button(label="Приєднатися", style=discord.ButtonStyle.primary, row=0)
     async def open_join(self, button: discord.ui.Button, interaction: discord.Interaction):
@@ -33,6 +35,8 @@ class MainMenuView(BaseView):
         register_join_view(interaction.user.id, view)
         await self.goto(interaction, view)
         set_state(interaction.user.id, States.CODE_LOBBY_WAIT)
+        #Save interaction for UI updates | Important!
+        save_interaction(interaction.user.id, interaction)
 
     @discord.ui.button(label="Набори слів", style=discord.ButtonStyle.secondary, row=1)
     async def open_packs(self, button: discord.ui.Button, interaction: discord.Interaction):

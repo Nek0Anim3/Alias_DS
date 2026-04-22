@@ -2,6 +2,8 @@ from random import randint
 import asyncio
 from debug.DebugLogger import DebugLogger
 from bot.connectBot import get_bot
+from enums.Roles import RoleTypes
+
 
 class GameSession:
     def __init__(self, words: list, players, player_scores: dict, teams: dict, lobby_id: int):
@@ -61,10 +63,10 @@ class GameSession:
         for player in players:
             if player == current_leader:
                 DebugLogger.Console(f"if player == current_leader: {player} setting role to LEADER")
-                player_roles[player] = "leader"
+                player_roles[player] = RoleTypes.LEADER
             else:
                 DebugLogger.Console(f"ELSE PLAYER not equal: {player} setting to PLAYER")
-                player_roles[player] = "player"
+                player_roles[player] = RoleTypes.PLAYER
         DebugLogger.Console(f"SET PLAYER ROLES: {player_roles}")
         return player_roles
 

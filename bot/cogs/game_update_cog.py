@@ -3,6 +3,7 @@ import discord
 from discord.ext import commands
 
 from bot.states.client_lobby_state import get_client_lobby
+from bot.states.interactions_state import get_interaction
 from bot.states.lobby_state import get_hostLobby_view
 from bot.views import lobby
 from bot.views.game.round_menu import RoundView
@@ -25,7 +26,8 @@ class GameUpdateCog(commands.Cog):
             else:
                 player_view = get_client_lobby(uid)
             view = RoundView(game_manager.lobby_id, roles[uid], uid)
-            await player_view.goto_global(view=view)
+            view_interaction = get_interaction(uid)
+            await player_view.goto_global(view=view, interaction=view_interaction)
 
             DebugLogger.Console(f"GAME START GAME ROLE: {roles[uid]}")
         # players = lobby['players']

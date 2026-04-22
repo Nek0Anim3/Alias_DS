@@ -14,6 +14,7 @@ class GameManager:
         self.player_roles = game_session.set_player_roles(game_session.players, self.current_leader)
         self.round_index = 0
         self.bot = get_bot()
+        DebugLogger.Console(f"------- GAME MANAGER SESSION INF --------\nLobby ID: {self.lobby_id}\nCurrent Leader: {self.current_leader}\nPlayer Moves List: {self.player_moves}\nRound Index: {self.round_index}")
 
     def start_round(self):
         if self.round_index % 2 == 0:

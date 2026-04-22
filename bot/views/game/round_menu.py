@@ -1,18 +1,17 @@
 from enum import Enum
 import discord
 from bot.views.base import BaseView
-from game.game_registry import get_active_session
-
+from enums.Roles import RoleTypes
 
 class RoundView(BaseView):
     def __init__(self, lobby_id: int, role: str, uid: int):
         from bot.connectBot import get_bot
         self.bot = get_bot()
         self.role = role
-
+        self.current_word = ""
         self.words = [self.current_word]
         self.menu_text = "-"
-
+        self.time = 0
         #Initial UI init for HOST!
         self.btn1 = ControlButton(type_btn=ButtonTypes.GREEN, view=self)
         self.btn2 = ControlButton(type_btn=ButtonTypes.RED, view=self)
@@ -21,7 +20,7 @@ class RoundView(BaseView):
 
 
 
-        if role:
+        if role == RoleTypes.LEADER:
             self.add_item(self.btn1)
             self.add_item(self.btn2)
             self.menu_text = f"{self.current_word} <-"
@@ -60,8 +59,7 @@ class ControlButton(discord.ui.Button):
         from bot.connectBot import get_bot
         self._view = view
         self.bot = get_bot()
-        if type == ButtonTypes.GREEN:
-
+        if type_btn == ButtonTypes.GREEN:
             super().__init__(
                     label="✅ Вгадав",
                     style=discord.ButtonStyle.success,
@@ -84,6 +82,6 @@ class ButtonTypes(Enum):
     GREEN = 1
     RED = 2
 
-class RoleTypes(Enum):
-    LEADER = 1
-    MEMBER = 2
+# class RoleTypes(Enum):
+#     LEADER = 1
+#     MEMBER = 2
