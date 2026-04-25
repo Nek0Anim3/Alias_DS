@@ -1,7 +1,10 @@
 from enum import Enum
+
 import discord
+
 from bot.views.base import BaseView
 from enums.Roles import RoleTypes
+
 
 class RoundView(BaseView):
     def __init__(self, role: str, interaction: discord.Interaction, first_word: str = "", lobby_id: int = 0):
@@ -12,12 +15,11 @@ class RoundView(BaseView):
         self.lobbyid = lobby_id
         self.current_word = first_word
         self.words = [self.current_word]
-        self.menu_text = "-"
         self.time = 0
         #Initial UI init for HOST!
         self.btn1 = ControlButton(type_btn=ButtonTypes.GREEN, view=self)
         self.btn2 = ControlButton(type_btn=ButtonTypes.RED, view=self)
-        self.menu_text = f"---"
+        self.menu_text = f" <-\n------------------\nЗалишилось {self.time}с"
 
         super().__init__(back_view=None)
 

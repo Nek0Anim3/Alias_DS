@@ -1,6 +1,6 @@
 from debug.DebugLogger import DebugLogger
-from game.game_session import GameSession
 from game.game_manager import GameManager
+from game.game_session import GameSession
 
 active_sessions: dict[int, "GameSession"] = {}
 

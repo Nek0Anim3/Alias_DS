@@ -1,8 +1,8 @@
 import discord
 
-
 from bot.views.base import BaseView
 from bot.views.lobby.lobby_player_menu import LobbyClientView
+
 
 class JoinMenuView(BaseView):
 

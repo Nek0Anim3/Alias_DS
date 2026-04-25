@@ -18,5 +18,15 @@ class GameManager:
 
     def start_round(self):
         if self.round_index % 2 == 0:
+            try:
+                self.pointer_index += 1
+            except IndexError:
+                self.pointer_index = 0
+            self.current_leader = self.player_moves[self.pointer_index]
+            self.game_session.set_player_roles(self.game_session.players, self.current_leader)
             self.game_session.start_round()
-            self.bot.dispatch("start_round_ui")
+            self.bot.dispatch("start_round")
+        else:
+
+            self.bot.dispatch("start_break")
+

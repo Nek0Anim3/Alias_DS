@@ -1,14 +1,12 @@
-#логика на обнову менюх, ужассс.
-import discord
 from discord.ext import commands
 
 from bot.states.client_lobby_state import get_client_lobby
 from bot.states.interactions_state import get_interaction
 from bot.states.lobby_state import get_hostLobby_view
-from bot.views import lobby
 from bot.views.game.round_menu import RoundView
 from bot.views.game.round_register import get_round_by_lobby_id, register_round_view
 from debug.DebugLogger import DebugLogger
+from enums.Roles import RoleTypes
 from game.game_manager import GameManager
 from game.game_registry import get_game_manager
 
@@ -29,9 +27,15 @@ class GameUpdateCog(commands.Cog):
             view = RoundView(roles[uid], view_interaction, game_manager.game_session.current_word, game_manager.lobby_id)
             register_round_view(game_manager.lobby_id, uid, view)
             await player_view.goto_global(view=view, interaction=view_interaction)
-
             DebugLogger.Console(f"GAME START GAME ROLE: {roles[uid]}")
+        await game_manager.game_session.start_timer(game_manager.game_session.time)
 
+    @commands.Cog.listener()
+    async def on_start_round(self, game_manager: GameManager, view):
+        roles = game_manager.player_roles
+        for uid in roles:
+            if roles[uid] == RoleTypes.LEADER:
+                pass
 
 
 

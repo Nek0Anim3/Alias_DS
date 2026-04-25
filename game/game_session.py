@@ -1,14 +1,16 @@
-from random import randint
 import asyncio
-from debug.DebugLogger import DebugLogger
+from random import randint
+
 from bot.connectBot import get_bot
+from debug.DebugLogger import DebugLogger
 from enums.Roles import RoleTypes
 
 
 class GameSession:
-    def __init__(self, words: list, players, player_scores: dict, teams: dict, lobby_id: int):
+    def __init__(self, words: list, players, player_scores: dict, teams: dict, lobby_id: int, lobby_time: int):
         self.lobby_id = lobby_id
         self.words = words
+        self.time = lobby_time
         self.players = players
         self.teams = teams
         self.player_scores = player_scores
@@ -17,9 +19,10 @@ class GameSession:
         DebugLogger.Console(f"Game session inited: Teams debug list = {self.teams}\n Current Word = {self.current_word}")
 
 
-    def start_round(self):
+    async def start_round(self):
+        timer = asyncio.create_task(self.start_timer(base_time=self.time))
+        await timer
 
-        pass
 
     def update_player_scores(self, uid: int, status: bool):
         if self.player_scores[uid] == 0:
