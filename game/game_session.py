@@ -14,7 +14,7 @@ class GameSession:
         self.player_scores = player_scores
         self.current_word = self.get_random_word("")
         self.bot = get_bot()
-        DebugLogger.Console(f"Game session inited: Teams debug list = {self.teams}")
+        DebugLogger.Console(f"Game session inited: Teams debug list = {self.teams}\n Current Word = {self.current_word}")
 
 
     def start_round(self):
@@ -71,7 +71,7 @@ class GameSession:
         return player_roles
 
     def shuffle_players_list(self, players: dict):
-        player_list = list(players.values()) #[['Jake', 'Diana'], ['Bob', 'Mike'], ['Celestia', 'Andrew', 'Timurka'], ['Gekidzo', 'Bogdan', 'Kirill', 'Nicolay']]
+        player_list = list(players.values())
 
         max_len = max(len(el) for el in player_list)
         for el in player_list:

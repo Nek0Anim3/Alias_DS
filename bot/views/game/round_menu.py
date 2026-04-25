@@ -4,11 +4,13 @@ from bot.views.base import BaseView
 from enums.Roles import RoleTypes
 
 class RoundView(BaseView):
-    def __init__(self, lobby_id: int, role: str, uid: int):
+    def __init__(self, role: str, interaction: discord.Interaction, first_word: str = "", lobby_id: int = 0):
         from bot.connectBot import get_bot
         self.bot = get_bot()
         self.role = role
-        self.current_word = ""
+        self.interaction = interaction
+        self.lobbyid = lobby_id
+        self.current_word = first_word
         self.words = [self.current_word]
         self.menu_text = "-"
         self.time = 0
@@ -16,6 +18,7 @@ class RoundView(BaseView):
         self.btn1 = ControlButton(type_btn=ButtonTypes.GREEN, view=self)
         self.btn2 = ControlButton(type_btn=ButtonTypes.RED, view=self)
         self.menu_text = f"---"
+
         super().__init__(back_view=None)
 
 
@@ -35,24 +38,12 @@ class RoundView(BaseView):
         if word is not None:
             self.words.append(word)
             self.current_word = word
-        if self.role != "leader":
+        if self.role != RoleTypes.LEADER:
             words_str = "\n".join(f"{w}" for w in self.words[:-1])
         else:
             words_str = "\n".join(f"{w}" for w in self.words)
         text = self._build_text(words_str)
         await self.interaction.edit_original_response(content=text, view=self)
-
-
-    # def rebase_view_buttons(self, role: RoleTypes):
-    #     match role:
-    #         case RoleTypes.LEADER:
-    #             DebugLogger.Console(f"ROUNDS: Adding buttons to {self.uid}")
-    #             self.add_item(self.btn1)
-    #             self.add_item(self.btn2)
-    #         case RoleTypes.MEMBER:
-    #             self.remove_item(self.btn1)
-    #             self.remove_item(self.btn2)
-    #             DebugLogger.Console(f"ROUNDS: Removing button from {self.uid}")
 
 class ControlButton(discord.ui.Button):
     def __init__(self, type_btn: ButtonTypes, view: RoundView, interaction = discord.Interaction):
@@ -74,9 +65,9 @@ class ControlButton(discord.ui.Button):
 
     async def callback(self, interaction: discord.Interaction):
         if self.style == discord.ButtonStyle.success:
-            self.bot.dispatch("update_text", "yes")
+            self.bot.dispatch("update_text", state="yes", lobby_id=self._view.lobbyid)
         else:
-            self.bot.dispatch("update_text", "no")
+            self.bot.dispatch("update_text", state="no", lobby_id=self._view.lobbyid)
 
 class ButtonTypes(Enum):
     GREEN = 1

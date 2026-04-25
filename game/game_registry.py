@@ -29,6 +29,12 @@ def register_game_manager(lobby_id: int, game_manager: "GameManager"):
         active_gamemanagers[lobby_id] = game_manager
         DebugLogger.Console(f"GAME REGISTRY Registered Game Manager: {lobby_id}.")
 
+def get_game_manager(lobby_id: int) -> "GameManager":
+    if lobby_id in active_gamemanagers:
+        return active_gamemanagers[lobby_id]
+    else:
+        return None
+
 def remove_game_manager(lobby_id: int):
     if lobby_id in active_gamemanagers:
         del active_gamemanagers[lobby_id]
