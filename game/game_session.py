@@ -18,19 +18,44 @@ class GameSession:
         self.bot = get_bot()
         DebugLogger.Console(f"Game session inited: Teams debug list = {self.teams}\n Current Word = {self.current_word}")
 
+        self.uid_to_team: dict[int, str] = self._build_uid_to_team(teams)
+        self.team_scores: dict[str, int] = {team_name: 0 for team_name in teams.keys()}
 
-    async def start_round(self):
-        timer = asyncio.create_task(self.start_timer(base_time=self.time))
-        await timer
+        DebugLogger.Console(f"Game session inited: Teams = {self.teams}, uid_to_team = {self.uid_to_team}")
 
+    def _build_uid_to_team(self, teams: dict) -> dict[int, str]:
+        result = {}
+        for team_name, members in teams.items():
+            for uid in members:
+                result[uid] = team_name
+        return result
 
     def update_player_scores(self, uid: int, status: bool):
-        if self.player_scores[uid] == 0:
+        team = self.uid_to_team.get(uid)
+        if team is None:
+            DebugLogger.Console(f"GAME SESSION (update_ply_scores): uid {uid} not found in teams")
             return
         if status:
-            self.player_scores[uid] += 1
+            self.team_scores[team] += 1
         else:
-            self.player_scores[uid] -= 1
+            #if self.team_scores[team] > 0:
+            self.team_scores[team] -= 1
+        DebugLogger.Console(f"SCORES: {self.team_scores}")
+
+
+
+    async def start_round(self):
+
+        DebugLogger.Console(f"GAME SESSION: Round started")
+
+
+    # def update_player_scores(self, uid: int, status: bool):
+    #     # if self.player_scores[uid] == 0:
+    #     #     return
+    #     if status:
+    #         self.player_scores[uid] += 1
+    #     else:
+    #         self.player_scores[uid] -= 1
 
     def get_random_word(self, word):
         rand_index = randint(0, len(self.words) - 1)
@@ -59,6 +84,7 @@ class GameSession:
             await asyncio.sleep(5)
         self.bot.dispatch("update_timer", lobby_id=self.lobby_id, base_time=base_time)
         DebugLogger.Console(f"TIMER: END TIME")
+
 
 #-------------------------
     def set_player_roles(self, players: list, current_leader: int):

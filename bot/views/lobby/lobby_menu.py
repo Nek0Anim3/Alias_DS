@@ -63,7 +63,13 @@ class LobbyMenuView(BaseView):
         teams_list = get_lobby_teams(self.host_id)
 
         #reg session and manager
-        session = GameSession(words=pack['words'],players=lobby['players'], player_scores={}, teams=teams_list, lobby_id=lobby['host'], lobby_time=lobby['timer']) #players=lobby['players']
+        session = GameSession(
+            words=pack['words'],
+            players=lobby['players'],
+            player_scores={},
+            teams=teams_list,
+            lobby_id=lobby['host'],
+            lobby_time=lobby['timer'])
         register_active_session(interaction.user.id, session)
 
         game_manager = GameManager(session, self.host_id)

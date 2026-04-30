@@ -1,7 +1,5 @@
 from enum import Enum
-
 import discord
-
 from bot.views.base import BaseView
 from enums.Roles import RoleTypes
 
@@ -66,6 +64,7 @@ class ControlButton(discord.ui.Button):
                 )
 
     async def callback(self, interaction: discord.Interaction):
+        await interaction.response.defer()
         if self.style == discord.ButtonStyle.success:
             self.bot.dispatch("update_text", state="yes", lobby_id=self._view.lobbyid)
         else:
@@ -75,6 +74,3 @@ class ButtonTypes(Enum):
     GREEN = 1
     RED = 2
 
-# class RoleTypes(Enum):
-#     LEADER = 1
-#     MEMBER = 2
