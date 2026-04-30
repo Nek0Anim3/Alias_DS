@@ -5,13 +5,11 @@ Currently i'm planning only a few features, but maybe in future i will add more 
 | Feature | Is is done? |
 |---|---|
 | Lobby System (may contain bugs) | Join ✅ / Leave ✅ / Create ✅ / Remove ✅ |
-|(NEW!) Team System| In progress... | 
+| Team System | ✅ Yes? Okay. | 
 | Packs System | Create ✅ / Remove ✅ |
 | Game Rounds | In progress... |
 | Leaderboard | Not yet |
 | Admin settings | Not yet |
-
-UPD: I've decided, that players must have an option to split into teams by themselves! So now Im working on team system
 
 # About Alias Game
 Alias is a board game, where you need to guess the word, while another explains you one. Game is divided into rounds, with (will do) adjustable round time, wins that player who reached max points (like guessed 20 words faster than other). One players must explain to another player a word, without saying it directly, or using synonyms. I'm not going to add punish system, or something like a "fair comptetitive" (yes let's do ranked alias with ELO, MMR, Advanced matchmaking and skins...). Game relies on your honesty, and faith that you wont argue with another players about "Was it guessed or it's too obvious". 
