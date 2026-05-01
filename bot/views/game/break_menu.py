@@ -13,6 +13,7 @@ class BreakView(BaseView):
         if current_uid == next_leader_uid:
             self.add_item(ContinueButton(lobby_id=lobby_id))
 
+
     def _build_text(self, team_scores: dict) -> str:
         scores_str = "\n".join(
             f"{team}: {score} очків"

@@ -24,20 +24,20 @@ class GameManager:
             self.current_leader = self.player_moves[self.pointer_index]
             self.game_session.set_player_roles(self.game_session.players, self.current_leader)
             self.bot.dispatch("start_round", game_manager=self)
+            DebugLogger.Console(f"------- GAME MANAGER ROUND --------\nLobby ID: {self.lobby_id}\nCurrent Leader: {self.current_leader}\nPlayer Moves List: {self.player_moves}\nRound Index: {self.round_index}")
             asyncio.create_task(self.start_timer(self.game_session.time))
         else:
             next_index = (self.pointer_index + 1) % len(self.player_moves)
             next_leader = self.player_moves[next_index]
+            DebugLogger.Console(f"------- GAME MANAGER BREAK --------\nLobby ID: {self.lobby_id}\nCurrent Leader: {self.current_leader}\nPlayer Moves List: {self.player_moves}\nRound Index: {self.round_index}")
             self.bot.dispatch("start_break", game_manager=self, next_leader=next_leader)
-
         self.round_index += 1
 
 
     async def start_timer(self, base_time):
         while base_time > 0:
-            DebugLogger.Console(f"TIMER (GAME_MANAGER): Left {base_time} seconds")
+            DebugLogger.Console(f"TIMER: Left {base_time} seconds")
             self.bot.dispatch("update_timer", lobby_id=self.lobby_id, base_time=base_time)
             base_time -= 5
             await asyncio.sleep(5)
-        self.bot.dispatch("update_timer", lobby_id=self.lobby_id, base_time=base_time)
         self.start_round()

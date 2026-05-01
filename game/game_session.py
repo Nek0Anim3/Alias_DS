@@ -43,20 +43,6 @@ class GameSession:
         DebugLogger.Console(f"SCORES: {self.team_scores}")
 
 
-
-    async def start_round(self):
-
-        DebugLogger.Console(f"GAME SESSION: Round started")
-
-
-    # def update_player_scores(self, uid: int, status: bool):
-    #     # if self.player_scores[uid] == 0:
-    #     #     return
-    #     if status:
-    #         self.player_scores[uid] += 1
-    #     else:
-    #         self.player_scores[uid] -= 1
-
     def get_random_word(self, word):
         rand_index = randint(0, len(self.words) - 1)
         if len(self.words) == 1:
