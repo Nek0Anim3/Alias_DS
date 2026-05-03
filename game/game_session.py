@@ -73,17 +73,7 @@ class GameSession:
 
 
 #-------------------------
-    def set_player_roles(self, players: list, current_leader: int):
-        player_roles = {}
-        for player in players:
-            if player == current_leader:
-                DebugLogger.Console(f"if player == current_leader: {player} setting role to LEADER")
-                player_roles[player] = RoleTypes.LEADER
-            else:
-                DebugLogger.Console(f"ELSE PLAYER not equal: {player} setting to PLAYER")
-                player_roles[player] = RoleTypes.PLAYER
-        DebugLogger.Console(f"SET PLAYER ROLES: {player_roles}")
-        return player_roles
+
 
     def shuffle_players_list(self, players: dict):
         player_list = list(players.values())

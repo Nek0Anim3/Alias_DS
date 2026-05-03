@@ -66,9 +66,9 @@ class ControlButton(discord.ui.Button):
     async def callback(self, interaction: discord.Interaction):
         await interaction.response.defer()
         if self.style == discord.ButtonStyle.success:
-            self.bot.dispatch("update_text", state="yes", lobby_id=self._view.lobbyid)
+            self.bot.dispatch("update_text", state="yes", lobby_id=self._view.lobbyid, uid=interaction.user.id)
         else:
-            self.bot.dispatch("update_text", state="no", lobby_id=self._view.lobbyid)
+            self.bot.dispatch("update_text", state="no", lobby_id=self._view.lobbyid, uid=interaction.user.id)
 
 class ButtonTypes(Enum):
     GREEN = 1

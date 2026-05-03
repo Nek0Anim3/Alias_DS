@@ -20,6 +20,7 @@ class GameUpdateCog(commands.Cog):
     @commands.Cog.listener()
     async def on_start_round(self, game_manager: GameManager, is_from_break: bool = False):
         roles = game_manager.player_roles
+        DebugLogger.Console(f"(START ROUND) PLAYER ROLES LIST: {game_manager.player_roles}")
         first_word = game_manager.game_session.get_random_word(game_manager.game_session.current_word)
         for uid in game_manager.game_session.players:
             interaction = get_interaction(uid)
@@ -37,8 +38,13 @@ class GameUpdateCog(commands.Cog):
             break_views = get_break_by_lobby_id(game_manager.lobby_id)
             try:
                 if is_from_break:
-                    await break_views[uid].goto(interaction=interaction, view=view)
+                    # await break_views[uid].goto(interaction=interaction, view=view)
+                    await interaction.edit_original_response(
+                        content=view.menu_text,
+                        view=view
+                    )
                 else:
+                    # await break_views[uid].goto(interaction=interaction, view=view)
                     await interaction.edit_original_response(
                         content=view.menu_text,
                         view=view
@@ -46,12 +52,13 @@ class GameUpdateCog(commands.Cog):
             except Exception as e:
                 DebugLogger.Console(f"LAUNCH ROUND EXCEPT: {uid}: {e}")
             break_views[uid] = None
-            create_task(game_manager.start_timer(game_manager.game_session.time))
+            game_manager.start_round()
 
 
     @commands.Cog.listener()
     async def on_start_game_global(self, game_manager: GameManager):
         roles = game_manager.player_roles
+
         first_word = game_manager.game_session.get_random_word(game_manager.game_session.current_word)
         for uid in game_manager.game_session.players:
             if uid == game_manager.lobby_id:
@@ -83,16 +90,16 @@ class GameUpdateCog(commands.Cog):
 
 
     @commands.Cog.listener()
-    async def on_update_text(self, state: str, lobby_id: int):
+    async def on_update_text(self, state: str, lobby_id: int, uid: int):
         lobbies = get_round_by_lobby_id(lobby_id)
         game_manager = get_game_manager(lobby_id)
         word = game_manager.game_session.get_random_word(game_manager.game_session.current_word)
         for roundview in lobbies:
             await roundview.update_text(word)
         if state == "yes":
-            game_manager.game_session.update_player_scores(lobby_id, True)
+            game_manager.game_session.update_player_scores(uid, True)
         else:
-            game_manager.game_session.update_player_scores(lobby_id, False)
+            game_manager.game_session.update_player_scores(uid, False)
 
 
     @commands.Cog.listener()
@@ -132,7 +139,7 @@ class GameUpdateCog(commands.Cog):
                 )
             except Exception as e:
                 DebugLogger.Console(f"GAME UPDATE (on_start_break): Exception {uid}: {e}")
-            DebugLogger.Console(f"--------GAME BREAK: CHANGES---------\nRound idx: {game_manager.round_index}, Pointer: {game_manager.pointer_index}\nLeader: {game_manager.current_leader}\n Roles: {game_manager.player_roles}")
+        DebugLogger.Console(f"--------GAME BREAK: CHANGES---------\nRound idx: {game_manager.round_index}, Pointer: {game_manager.pointer_index}\nLeader: {game_manager.current_leader}\n Roles: {game_manager.player_roles}")
 
     @commands.Cog.listener()
     async def on_continue_round(self, game_manager: GameManager):
