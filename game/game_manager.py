@@ -18,6 +18,12 @@ class GameManager:
         self.bot = get_bot()
         DebugLogger.Console(f"------- GAME MANAGER SESSION INF --------\nLobby ID: {self.lobby_id}\nCurrent Leader: {self.current_leader}\nPlayer Moves List: {self.player_moves}\nRound Index: {self.round_index}")
 
+    def next_pointer(self):
+        if self.pointer_index == len(self.player_moves) - 1:
+            self.pointer_index = 0
+        else:
+            self.pointer_index += 1
+
     def start_round(self):
         if self.round_index % 2 == 0:
             self.pointer_index = (self.pointer_index + 1) % len(self.player_moves)
@@ -25,13 +31,19 @@ class GameManager:
             self.game_session.set_player_roles(self.game_session.players, self.current_leader)
             self.bot.dispatch("start_round", game_manager=self)
             DebugLogger.Console(f"------- GAME MANAGER ROUND --------\nLobby ID: {self.lobby_id}\nCurrent Leader: {self.current_leader}\nPlayer Moves List: {self.player_moves}\nRound Index: {self.round_index}")
+            DebugLogger.Console(f"GAME MANAGER ROUND INF: Player Moves: {self.player_moves}\n LENGTH: {len(self.player_moves)}")
             asyncio.create_task(self.start_timer(self.game_session.time))
-        else:
-            next_index = (self.pointer_index + 1) % len(self.player_moves)
-            next_leader = self.player_moves[next_index]
+            self.round_index += 1
+
+    def start_break(self):
+            self.next_pointer()
+            next_leader = self.player_moves[self.pointer_index]
             DebugLogger.Console(f"------- GAME MANAGER BREAK --------\nLobby ID: {self.lobby_id}\nCurrent Leader: {self.current_leader}\nPlayer Moves List: {self.player_moves}\nRound Index: {self.round_index}")
             self.bot.dispatch("start_break", game_manager=self, next_leader=next_leader)
-        self.round_index += 1
+            self.round_index += 1
+            self.current_leader = self.player_moves[self.pointer_index]
+            self.game_session.set_player_roles(self.game_session.players, self.current_leader)
+
 
 
     async def start_timer(self, base_time):
@@ -40,4 +52,4 @@ class GameManager:
             self.bot.dispatch("update_timer", lobby_id=self.lobby_id, base_time=base_time)
             base_time -= 5
             await asyncio.sleep(5)
-        self.start_round()
+        self.start_break()

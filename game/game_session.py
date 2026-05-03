@@ -40,7 +40,7 @@ class GameSession:
         else:
             #if self.team_scores[team] > 0:
             self.team_scores[team] -= 1
-        DebugLogger.Console(f"SCORES: {self.team_scores}")
+        DebugLogger.Console(f"UID Retrieved: {uid} Status: {status}| SCORES: {self.team_scores}")
 
 
     def get_random_word(self, word):

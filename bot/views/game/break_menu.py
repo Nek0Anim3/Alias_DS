@@ -22,7 +22,7 @@ class BreakView(BaseView):
         return (
             f"Кінець раунду!\n\n"
             f"Рахунок:\n{scores_str}\n\n"
-            f"Очікуємо наступного ведучого..."
+            f"Очікуємо..."
         )
 
 
@@ -46,4 +46,4 @@ class ContinueButton(discord.ui.Button):
         bot = get_bot()
         game_manager = get_game_manager(self.lobby_id)
 
-        bot.dispatch("continue_round", game_manager=game_manager)
+        bot.dispatch("start_round", game_manager=game_manager, is_from_break=True)

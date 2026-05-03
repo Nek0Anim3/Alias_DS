@@ -6,8 +6,7 @@ from bot.states.lobby_state import get_hostLobby_view
 from bot.views.game.break_menu import BreakView
 from bot.views.game.break_register import register_break_view, get_break_by_lobby_id
 from bot.views.game.round_menu import RoundView
-from bot.views.game.round_register import get_round_by_lobby_id, register_round_view, clear_round_views, \
-    update_round_view
+from bot.views.game.round_register import get_round_by_lobby_id, register_round_view, update_round_view
 from debug.DebugLogger import DebugLogger
 from game.game_manager import GameManager
 from game.game_registry import get_game_manager
@@ -21,6 +20,7 @@ class GameUpdateCog(commands.Cog):
     @commands.Cog.listener()
     async def on_start_round(self, game_manager: GameManager, is_from_break: bool = False):
         roles = game_manager.player_roles
+        first_word = game_manager.game_session.get_random_word(game_manager.game_session.current_word)
         for uid in game_manager.game_session.players:
             interaction = get_interaction(uid)
             if interaction is None:
@@ -29,14 +29,15 @@ class GameUpdateCog(commands.Cog):
             view = RoundView(
                 roles[uid],
                 interaction,
-                game_manager.game_session.current_word,
+                first_word,
                 game_manager.lobby_id
             )
+            DebugLogger.Console(f"UPDATING ROUND VIEW TO {uid}, view: {view}. LobbyID: {game_manager.lobby_id}")
             update_round_view(game_manager.lobby_id, uid, view)
             break_views = get_break_by_lobby_id(game_manager.lobby_id)
             try:
                 if is_from_break:
-                    await break_views[uid].goto_global(interaction=interaction, view=view)
+                    await break_views[uid].goto(interaction=interaction, view=view)
                 else:
                     await interaction.edit_original_response(
                         content=view.menu_text,
@@ -45,12 +46,13 @@ class GameUpdateCog(commands.Cog):
             except Exception as e:
                 DebugLogger.Console(f"LAUNCH ROUND EXCEPT: {uid}: {e}")
             break_views[uid] = None
-
+            create_task(game_manager.start_timer(game_manager.game_session.time))
 
 
     @commands.Cog.listener()
     async def on_start_game_global(self, game_manager: GameManager):
         roles = game_manager.player_roles
+        first_word = game_manager.game_session.get_random_word(game_manager.game_session.current_word)
         for uid in game_manager.game_session.players:
             if uid == game_manager.lobby_id:
                 player_view = get_hostLobby_view(game_manager.lobby_id)
@@ -64,7 +66,7 @@ class GameUpdateCog(commands.Cog):
             view = RoundView(
                 roles[uid],
                 view_interaction,
-                game_manager.game_session.get_random_word(game_manager.game_session.current_word),
+                first_word,
                 game_manager.lobby_id
             )
             register_round_view(game_manager.lobby_id, uid, view)
@@ -72,9 +74,9 @@ class GameUpdateCog(commands.Cog):
             DebugLogger.Console(f"GAME START GAME ROLE: {roles[uid]}")
 
         game_manager.round_index += 1
-        game_manager.pointer_index = (game_manager.pointer_index + 1) % len(game_manager.player_moves)
-        game_manager.current_leader = game_manager.player_moves[game_manager.pointer_index]
-        game_manager.game_session.set_player_roles(game_manager.game_session.players, game_manager.current_leader)
+        # game_manager.pointer_index = (game_manager.pointer_index + 1) % len(game_manager.player_moves)
+        # game_manager.current_leader = game_manager.player_moves[game_manager.pointer_index]
+        # game_manager.game_session.set_player_roles(game_manager.game_session.players, game_manager.current_leader)
         create_task(game_manager.start_timer(game_manager.game_session.time))
 
         DebugLogger.Console(f"-------- START GAME GLOBAL INF --------\nRound INDEX: {game_manager.round_index}\nPointer: {game_manager.pointer_index}\nCurrent Leader: {game_manager.current_leader}")
@@ -130,10 +132,7 @@ class GameUpdateCog(commands.Cog):
                 )
             except Exception as e:
                 DebugLogger.Console(f"GAME UPDATE (on_start_break): Exception {uid}: {e}")
-            game_manager.round_index += 1
-            game_manager.pointer_index = (game_manager.pointer_index + 1) % len(game_manager.player_moves)
-            game_manager.current_leader = game_manager.player_moves[game_manager.pointer_index]
-            game_manager.game_session.set_player_roles(game_manager.game_session.players, game_manager.current_leader)
+            DebugLogger.Console(f"--------GAME BREAK: CHANGES---------\nRound idx: {game_manager.round_index}, Pointer: {game_manager.pointer_index}\nLeader: {game_manager.current_leader}\n Roles: {game_manager.player_roles}")
 
     @commands.Cog.listener()
     async def on_continue_round(self, game_manager: GameManager):

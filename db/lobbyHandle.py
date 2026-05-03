@@ -22,7 +22,7 @@ async def createLobbyDB(uid: int, name: str):
             "players": [uid],
             "player_names": [name],
             "pack": "Не обрано",
-            "timer": 60
+            "timer": 10
         }),
         addPlayertoDB(uid, name, uid, "host")
     )
