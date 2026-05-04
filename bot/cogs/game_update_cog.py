@@ -3,7 +3,6 @@ from discord.ext import commands
 from bot.states.client_lobby_state import get_client_lobby
 from bot.states.interactions_state import get_interaction
 from bot.states.lobby_state import get_hostLobby_view
-from bot.views.game.break_menu import BreakView
 from bot.views.game.break_register import register_break_view, get_break_by_lobby_id
 from bot.views.game.round_menu import RoundView
 from bot.views.game.round_register import get_round_by_lobby_id, register_round_view, update_round_view
@@ -18,7 +17,7 @@ class GameUpdateCog(commands.Cog):
         self.bot = bot
 
     @commands.Cog.listener()
-    async def on_start_round(self, game_manager: GameManager, is_from_break: bool = False):
+    async def on_start_round(self, game_manager: GameManager):
         roles = game_manager.player_roles
         DebugLogger.Console(f"(START ROUND) PLAYER ROLES LIST: {game_manager.player_roles}")
         first_word = game_manager.game_session.get_random_word(game_manager.game_session.current_word)
@@ -37,14 +36,6 @@ class GameUpdateCog(commands.Cog):
             update_round_view(game_manager.lobby_id, uid, view)
             break_views = get_break_by_lobby_id(game_manager.lobby_id)
             try:
-                if is_from_break:
-                    # await break_views[uid].goto(interaction=interaction, view=view)
-                    await interaction.edit_original_response(
-                        content=view.menu_text,
-                        view=view
-                    )
-                else:
-                    # await break_views[uid].goto(interaction=interaction, view=view)
                     await interaction.edit_original_response(
                         content=view.menu_text,
                         view=view
@@ -81,9 +72,6 @@ class GameUpdateCog(commands.Cog):
             DebugLogger.Console(f"GAME START GAME ROLE: {roles[uid]}")
 
         game_manager.round_index += 1
-        # game_manager.pointer_index = (game_manager.pointer_index + 1) % len(game_manager.player_moves)
-        # game_manager.current_leader = game_manager.player_moves[game_manager.pointer_index]
-        # game_manager.game_session.set_player_roles(game_manager.game_session.players, game_manager.current_leader)
         create_task(game_manager.start_timer(game_manager.game_session.time))
 
         DebugLogger.Console(f"-------- START GAME GLOBAL INF --------\nRound INDEX: {game_manager.round_index}\nPointer: {game_manager.pointer_index}\nCurrent Leader: {game_manager.current_leader}")
@@ -108,11 +96,6 @@ class GameUpdateCog(commands.Cog):
         for lobby in lobbies:
             lobby.time = base_time
             await lobby.update_text()
-
-    # @commands.Cog.listener()
-    # async def on_button_event(self, interaction: discord.Interaction ,lobby_id: int, status: bool):
-    #     game_manager = get_game_manager(lobby_id)
-    #     game_manager.game_session.update_player_scores(interaction.user.id, status)
 
     @commands.Cog.listener()
     async def on_start_break(self, game_manager: GameManager, next_leader: int):
@@ -147,7 +130,7 @@ class GameUpdateCog(commands.Cog):
         create_task(game_manager.start_timer(game_manager.game_session.time))
 
     # -- LEADER BOARD (p. s. https://preview.redd.it/diana-pragmata-art-by-me-v0-3n68umifdcxg1.jpeg?width=1080&crop=smart&auto=webp&s=eac4c6b63b35c309069c251eafed097ecc24bea4)
-
+    # -- One of my fav soundtracks Hunger and Hope - Between August and December
     async def _show_leaderboard(self, game_manager: GameManager, winner: str):
         from bot.views.game.leaderboard_menu import LeaderboardView
         team_scores = game_manager.game_session.team_scores
