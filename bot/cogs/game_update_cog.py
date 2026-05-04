@@ -125,18 +125,19 @@ class GameUpdateCog(commands.Cog):
         DebugLogger.Console(f"--------GAME BREAK: CHANGES---------\nRound idx: {game_manager.round_index}, Pointer: {game_manager.pointer_index}\nLeader: {game_manager.current_leader}\n Roles: {game_manager.player_roles}")
 
     @commands.Cog.listener()
-    async def on_continue_round(self, game_manager: GameManager):
+    async def on_win_game(self, game_manager: GameManager):
         # await self._launch_round(game_manager)
-        create_task(game_manager.start_timer(game_manager.game_session.time))
+        await self._show_leaderboard(game_manager)
 
     # -- LEADER BOARD (p. s. https://preview.redd.it/diana-pragmata-art-by-me-v0-3n68umifdcxg1.jpeg?width=1080&crop=smart&auto=webp&s=eac4c6b63b35c309069c251eafed097ecc24bea4)
     # -- One of my fav soundtracks Hunger and Hope - Between August and December
-    async def _show_leaderboard(self, game_manager: GameManager, winner: str):
+    async def _show_leaderboard(self, game_manager: GameManager):
         from bot.views.game.leaderboard_menu import LeaderboardView
         team_scores = game_manager.game_session.team_scores
         #sort with lambda OH BOYYY
         sorted_scores = sorted(team_scores.items(), key=lambda x: x[1], reverse=True)
-
+        winner = sorted_scores[0][0]
+        DebugLogger.Console(f"WINNER: {winner}")
         for uid in game_manager.game_session.players:
             interaction = get_interaction(uid)
             if interaction is None:
@@ -154,5 +155,8 @@ class GameUpdateCog(commands.Cog):
             except Exception as e:
                 DebugLogger.Console(f"Show leaderboard err: {uid}: {e}")
 
+    @commands.Cog.listener()
+    async def on_exit_game(self, game_manager: GameManager):
+        pass
 def setup(bot: commands.Bot):
     bot.add_cog(GameUpdateCog(bot))

@@ -29,6 +29,10 @@ import asyncio
 import json
 import os
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
 from mypy.join import update_callable_ids
 
@@ -46,7 +50,7 @@ async def pushToDB(data: dict):
         print(f"Pack {data['name']} already exists")
         return
     collection.insert_one({
-        "uid": data["uid"],
+        "uid": int(data["uid"]),
         "name": data["name"],
         "words": data["words"],
     })
@@ -55,14 +59,16 @@ async def pushToDB(data: dict):
 
 def createPack(args):
     name = args.name
-    uid = os.getenv("OWNER_UID")
+    uid = os.getenv('OWNER_ID')
+
     lines = []
     # ---------- ^ ^ ^ all the data that pushes
-
     if uid is None:
         print(f"! ! ! OWNER_ID not found in .env file\nUsing default UID: 0\nWARNING: YOU COULDNT ACCESS THIS PACK IN BOT UI, ONLY MANUAL REMOVAL HERE BY NAME OR IN MONGODB COMPASS")
         uid = 0
-    print(" \n"*3)
+    else:
+        print(f"Using ID from .env: {uid}")
+    print(" \n"*2)
     print(f"Creating Pack {name} | STEP 2 | IMPORT .TXT | If you dont have, write     ::m   to manual adding mode")
 
     while True:
