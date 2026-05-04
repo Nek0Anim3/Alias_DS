@@ -3,14 +3,17 @@ from discord.ext import commands
 from bot.states.client_lobby_state import get_client_lobby
 from bot.states.interactions_state import get_interaction
 from bot.states.lobby_state import get_hostLobby_view
-from bot.views.game.break_register import register_break_view, get_break_by_lobby_id
+from bot.views.game.break_register import register_break_view, get_break_by_lobby_id, clear_break_views
 from bot.views.game.round_menu import RoundView
-from bot.views.game.round_register import get_round_by_lobby_id, register_round_view, update_round_view
+from bot.views.game.round_register import get_round_by_lobby_id, register_round_view, update_round_view, clear_round_views
+from bot.views.main_menu import MainMenuView
+from db.lobbyHandle import deleteLobbyDB
+from db.userHandle import removePlayerfromDB
 from debug.DebugLogger import DebugLogger
 from game.game_manager import GameManager
-from game.game_registry import get_game_manager
-from asyncio import create_task
-
+from game.game_registry import get_game_manager, remove_game_manager, remove_active_session
+# from asyncio import create_task, gather
+import asyncio
 
 class GameUpdateCog(commands.Cog):
     def __init__(self, bot):
@@ -72,7 +75,7 @@ class GameUpdateCog(commands.Cog):
             DebugLogger.Console(f"GAME START GAME ROLE: {roles[uid]}")
 
         game_manager.round_index += 1
-        create_task(game_manager.start_timer(game_manager.game_session.time))
+        asyncio.create_task(game_manager.start_timer(game_manager.game_session.time))
 
         DebugLogger.Console(f"-------- START GAME GLOBAL INF --------\nRound INDEX: {game_manager.round_index}\nPointer: {game_manager.pointer_index}\nCurrent Leader: {game_manager.current_leader}")
 
@@ -145,7 +148,8 @@ class GameUpdateCog(commands.Cog):
             view = LeaderboardView(
                 sorted_scores=sorted_scores,
                 winner=winner,
-                lobby_id=game_manager.lobby_id
+                lobby_id=game_manager.lobby_id,
+                game_manager=game_manager
             )
             try:
                 await interaction.edit_original_response(
@@ -157,6 +161,23 @@ class GameUpdateCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_exit_game(self, game_manager: GameManager):
-        pass
+        players = game_manager.player_moves
+        lobby_id = game_manager.lobby_id
+        for p in players:
+            interaction = get_interaction(p)
+            view = MainMenuView()
+            await asyncio.gather(
+                removePlayerfromDB(uid=p),
+                interaction.edit_original_response(
+                    content=view.menu_text,
+                    view=view
+                )
+            )
+        remove_game_manager(lobby_id)
+        remove_active_session(lobby_id)
+        clear_round_views(lobby_id)
+        clear_break_views(lobby_id)
+        await deleteLobbyDB(lobby_id)
+
 def setup(bot: commands.Bot):
     bot.add_cog(GameUpdateCog(bot))
