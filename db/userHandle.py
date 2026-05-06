@@ -17,7 +17,8 @@ async def addPlayertoDB(uid: int, usname: str, lobby_id: int, role: str):
             "uid": uid,
             "name": usname,
             "lobby_id": lobby_id,
-            "role": role
+            "role": role,
+            "score": 0
         })
     DebugLogger.Console("USER DB: Player added", uid)
 

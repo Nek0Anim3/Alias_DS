@@ -2,18 +2,21 @@ import discord
 from discord.ext import commands
 from bot.states.client_lobby_state import get_client_lobby
 from bot.states.interactions_state import get_interaction
-from bot.states.lobby_state import get_hostLobby_view
+from bot.states.lobby_state import get_hostLobby_view, unregister_hostLobby_view
 from bot.views.game.break_register import register_break_view, get_break_by_lobby_id, clear_break_views
 from bot.views.game.round_menu import RoundView
 from bot.views.game.round_register import get_round_by_lobby_id, register_round_view, update_round_view, clear_round_views
 from bot.views.main_menu import MainMenuView
-from db.lobbyHandle import deleteLobbyDB
+from db.lobbyHandle import deleteLobbyDB, push_scores_db
 from db.userHandle import removePlayerfromDB
 from debug.DebugLogger import DebugLogger
 from game.game_manager import GameManager
 from game.game_registry import get_game_manager, remove_game_manager, remove_active_session
 # from asyncio import create_task, gather
 import asyncio
+
+from game.game_teams import clear_teams
+
 
 class GameUpdateCog(commands.Cog):
     def __init__(self, bot):
@@ -130,7 +133,12 @@ class GameUpdateCog(commands.Cog):
     @commands.Cog.listener()
     async def on_win_game(self, game_manager: GameManager):
         # await self._launch_round(game_manager)
-        await self._show_leaderboard(game_manager)
+        await asyncio.gather(
+            self._show_leaderboard(game_manager),
+            push_scores_db(game_manager)
+        )
+
+
 
     # -- LEADER BOARD (p. s. https://preview.redd.it/diana-pragmata-art-by-me-v0-3n68umifdcxg1.jpeg?width=1080&crop=smart&auto=webp&s=eac4c6b63b35c309069c251eafed097ecc24bea4)
     # -- One of my fav soundtracks Hunger and Hope - Between August and December
@@ -175,6 +183,8 @@ class GameUpdateCog(commands.Cog):
             )
         remove_game_manager(lobby_id)
         remove_active_session(lobby_id)
+        clear_teams(lobby_id)
+        unregister_hostLobby_view(lobby_id)
         clear_round_views(lobby_id)
         clear_break_views(lobby_id)
         await deleteLobbyDB(lobby_id)

@@ -6,6 +6,7 @@ from datetime import datetime
 from db import get_Db
 from db.userHandle import addPlayertoDB
 from debug.DebugLogger import DebugLogger
+from game.game_manager import GameManager
 
 
 async def createLobbyDB(uid: int, name: str):
@@ -122,3 +123,21 @@ async def updateTeamInLobby(lobby_id: int, uid: int, team_name: str):
     db = get_Db()
     col = db.get_collection('lobbys')
     await col.update_one({"host": lobby_id}, {"$push": {uid: team_name}})
+
+#scores down 'ere
+async def push_scores_db(game_manager: GameManager):
+    DebugLogger.Console("MONGO: Starting pushing scores to DB...")
+
+    db = get_Db()
+    col = db.get_collection('players')
+
+    scores_dict = game_manager.game_session.team_scores
+    score_players = scores_dict.keys()
+
+    for player in score_players:
+        document = await col.find_one({"name": player})
+        await col.update_one({"name": player}, {"$set": {"score": document['score']+scores_dict[player]}})
+
+        DebugLogger.Console(f"MONGO: Updated score to {player}: {document['score']+scores_dict[player]}")
+    DebugLogger.Console("MONGO: Pushed scores to DB")
+

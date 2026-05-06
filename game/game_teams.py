@@ -27,6 +27,11 @@ def unregister_team(lobby_id: int, team_name: str):
         registered_teams[lobby_id].pop(team_name)
         DebugLogger.Console("Unregistered team " + team_name)
 
+def clear_teams(lobby_id: int):
+    if registered_teams.get(lobby_id, None) is not None:
+        registered_teams.pop(lobby_id)
+        DebugLogger.Console(f"Cleared lobby teams {lobby_id}")
+
 def get_lobby_teams(lobby_id: int):
     if lobby_id in registered_teams:
         DebugLogger.Console(f"get_lobby_teams DEBUG: {registered_teams[lobby_id]}.")
