@@ -1,18 +1,12 @@
 import discord
-import bot.states.lobby_state as lobby_state
-from bot.states.interactions_state import save_interaction
-from bot.states.join_state import register_join_view
-from bot.states.states import set_state, States
 from bot.views.base import BaseView
 from bot.views.main_menu import MainMenuView
-from db.lobbyHandle import createLobbyDB
-
+from debug.DebugLogger import DebugLogger
 
 class GlobalLeaderView(BaseView):
     def __init__(self, leaderboard_list: list):
         self.menu_text = self._build_text(leaderboard_list)
         super().__init__(back_view=MainMenuView())
-
 
     def _build_text(self, leaderboard_list: list):
         lines = ["Глобальна таблиця лідерів\n------------------------"]
