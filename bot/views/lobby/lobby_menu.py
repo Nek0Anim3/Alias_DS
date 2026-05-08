@@ -1,5 +1,5 @@
 import asyncio
-
+from collections import Counter
 import discord
 
 from bot.states.states import get_state, States
@@ -9,6 +9,7 @@ from bot.views.teams.teams_list_menu import TeamsListView
 from db.lobbyHandle import deleteLobbyDB, findLobbyByCode, update_status_lobby
 from db.packs import fetchAllPacks, getPackByName
 from db.userHandle import removePlayerfromDB
+from debug.DebugLogger import DebugLogger
 from game.game_manager import GameManager
 from game.game_registry import register_active_session, register_game_manager
 from game.game_session import GameSession
@@ -60,14 +61,29 @@ class LobbyMenuView(BaseView):
         lobby = await findLobbyByCode(self.code)
         await update_status_lobby(lobby['host'], "ingame")
         pack = await getPackByName(lobby['pack'])
-        teams_list = get_lobby_teams(self.host_id)
+        teams_dict = get_lobby_teams(self.host_id)
+
+        ply_team_list = [item for values in teams_dict.values() for item in values]
+        # print("PLY TEAM")
+        # print(ply_team_list)
+        # print("-------")
+        # print(lobby['players'])
+        # DebugLogger.Console(f"TEAM LIST {teams_dict}")
+
+        is_teams_equal = True if Counter(ply_team_list) == Counter(lobby['players']) else False
+
+        if pack is None or is_teams_equal is False:
+            DebugLogger.Console(f"{lobby['host']} cannot start game: NO PACK / NO TEAM")
+            await interaction.response.defer()
+            return
+
 
         #reg session and manager
         session = GameSession(
             words=pack['words'],
             players=lobby['players'],
             player_scores={},
-            teams=teams_list,
+            teams=teams_dict,
             lobby_id=lobby['host'],
             lobby_time=lobby['timer'])
         register_active_session(interaction.user.id, session)

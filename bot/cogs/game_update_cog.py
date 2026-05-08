@@ -12,7 +12,6 @@ from db.userHandle import removePlayerfromDB
 from debug.DebugLogger import DebugLogger
 from game.game_manager import GameManager
 from game.game_registry import get_game_manager, remove_game_manager, remove_active_session
-# from asyncio import create_task, gather
 import asyncio
 
 from game.game_teams import clear_teams
@@ -132,7 +131,6 @@ class GameUpdateCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_win_game(self, game_manager: GameManager):
-        # await self._launch_round(game_manager)
         await asyncio.gather(
             self._show_leaderboard(game_manager),
             push_scores_db(game_manager)
