@@ -29,16 +29,19 @@ class LobbyJoinCog(commands.Cog):
                 return
             clear_state(message.author.id)
 
-            #Оновлення менюшки для хоста лобі
+            new_lobby = await findLobbyByCode(code) #isn't good but okay
+
             from bot.connectBot import get_bot
             bot = get_bot()
-            bot.dispatch("update_lobby", lobby)
+            DebugLogger.Console(f"DISPATCHING UPDATE_LOBBY WITH DATA: {new_lobby['player_names']}, {len(new_lobby['players'])}")
+            bot.dispatch("update_lobby", new_lobby)
+
             #Оновлення менюшки для гравця який приєднується
             from bot.states.join_state import get_join_view
             view = get_join_view(message.author.id)
-            await view.joinLobbySetView(lobby_name=lobby['name'], player_count=len(lobby['players']), players=lobby['player_names'], code=code, host_id=lobby['host'])
+            await view.joinLobbySetView(lobby_name=new_lobby['name'], player_count=len(new_lobby['players']), players=new_lobby['player_names'], code=code, host_id=new_lobby['host'])
 
-            DebugLogger.Console("JOINED LOBBY, player ", message.author.name)
+            DebugLogger.Console(f"Player {message.author.name} joined {new_lobby['host']}")
 
 
 
