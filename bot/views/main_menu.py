@@ -5,7 +5,7 @@ from bot.states.interactions_state import save_interaction
 from bot.states.join_state import register_join_view
 from bot.states.states import set_state, States
 from bot.views.base import BaseView
-from db.lobbyHandle import createLobbyDB
+from db.lobbyHandle import createLobbyDB, fetch_leaderboard_db
 
 
 class MainMenuView(BaseView):
@@ -48,4 +48,12 @@ class MainMenuView(BaseView):
     async def open_help(self, button: discord.ui.Button, interaction: discord.Interaction):
         from bot.views.rule_menu import RuleMenuView
         await self.goto(interaction, RuleMenuView())
+
+    @discord.ui.button(label="Лідерборд", style=discord.ButtonStyle.secondary, row=1)
+    async def open_leaderboard(self, button: discord.ui.Button, interaction: discord.Interaction):
+        from bot.views.global_leaderboard_menu import GlobalLeaderView
+        leader_dict = await fetch_leaderboard_db()
+        await self.goto(interaction, GlobalLeaderView(leader_dict))
+
+
 

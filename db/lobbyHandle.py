@@ -141,3 +141,13 @@ async def push_scores_db(game_manager: GameManager):
         DebugLogger.Console(f"MONGO: Updated score to {player}: {document['score']+scores_dict[player]}")
     DebugLogger.Console("MONGO: Pushed scores to DB")
 
+async def fetch_leaderboard_db():
+    db = get_Db()
+    col = db.get_collection('players')
+    cursor = col.find({})
+    doc_list = []
+    async for document in cursor:
+        doc_list.append(document)
+    return doc_list
+    DebugLogger.Console(f"MONGO: Fetched leaderboard data: {doc_list}")
+

@@ -9,7 +9,7 @@ class MenuCog(commands.Cog):
         self.bot = bot
         self._last_member = None
 
-    @discord.slash_command(name="start", description="Відкриває стартове меню Еліас")
+    @discord.slash_command(name="start", description="Відкриває стартове меню Alias")
     async def start_menu(self, ctx: discord.ApplicationContext):
         await ctx.respond(
             view=MainMenuView(),

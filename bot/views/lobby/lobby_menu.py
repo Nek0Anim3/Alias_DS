@@ -64,12 +64,6 @@ class LobbyMenuView(BaseView):
         teams_dict = get_lobby_teams(self.host_id)
 
         ply_team_list = [item for values in teams_dict.values() for item in values]
-        # print("PLY TEAM")
-        # print(ply_team_list)
-        # print("-------")
-        # print(lobby['players'])
-        # DebugLogger.Console(f"TEAM LIST {teams_dict}")
-
         is_teams_equal = True if Counter(ply_team_list) == Counter(lobby['players']) else False
 
         if pack is None or is_teams_equal is False:
