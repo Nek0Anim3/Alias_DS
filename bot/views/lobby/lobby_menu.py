@@ -33,12 +33,15 @@ class LobbyMenuView(BaseView):
         players_str = "\n".join(f"{p}" for p in self.players)
         return (
             f"Лобі {self.uname}\n"
-            f"Команда: {self.selected_team}\n"
-            f"Гравців: {len(self.players)}\n"
-            f"{players_str}\n"
             f"Код: {self.code}\n"
-            f"Набір слів: {self.pack}\n"
-            f"Таймер раунду: 60с (WIP)"
+            f"------------------\n"
+            f"🫂 Ваша команда: {self.selected_team}\n"                        
+            f"------------------\n"
+            f"👤 Гравців: {len(self.players)}\n"
+            f"{players_str}\n"
+            f"------------------\n"
+            f"📒 Набір слів: {self.pack}\n"
+            f"⌚ Таймер раунду: 60с (WIP)"
         )
 
 

@@ -24,8 +24,10 @@ class BreakView(BaseView):
 
         return (
             f"Кінець раунду!\n\n"
-            f"Рахунок:\n{scores_str}\n\n"
-            f"Очікуємо..."
+            f"------------------\n"
+            f"📊 Рахунок:\n{scores_str}\n\n"
+            f"------------------\n"
+            f"⌚ Очікуємо..."
         )
 
 
@@ -45,15 +47,15 @@ class ContinueButton(discord.ui.Button):
         from game.game_registry import get_game_manager
         game_manager = get_game_manager(self.lobby_id)
         bot = get_bot()
-        #Debug WIN Value WIP
         for i in self.team_scores.values():
+            # Debug WIN Value WIP
             if i >= game_manager.win_value:
                 bot.dispatch("win_game", game_manager=get_game_manager(self.lobby_id))
                 await interaction.response.defer()
                 return
 
         await interaction.response.edit_message(
-            content="Починаємо раунд...",
+            content="⌚ Починаємо раунд...",
             view=None
         )
         bot = get_bot()

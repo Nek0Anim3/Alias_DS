@@ -52,13 +52,13 @@ class ControlButton(discord.ui.Button):
         self.bot = get_bot()
         if type_btn == ButtonTypes.GREEN:
             super().__init__(
-                    label="✅ Вгадав",
+                    label="Вгадав",
                     style=discord.ButtonStyle.success,
                     row=0
                 )
         else:
             super().__init__(
-                    label="❎ Не вгадав",
+                    label="Не вгадав",
                     style=discord.ButtonStyle.danger,
                     row=0
                 )
