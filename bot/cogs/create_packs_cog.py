@@ -44,6 +44,9 @@ class CreatePacksCog(commands.Cog):
         if word in words:
             await message.author.send(content=f"Слово {word} вже є у наборі")
             return
+        if len(word) > 30:
+            await message.author.send(content=f"Слово не має бути довше 30 символів")
+            return
         words.append(word)
         update_data(user_id, words=words)
         view = CreatePackMenu(stage="words", words=words)

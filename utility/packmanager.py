@@ -134,8 +134,6 @@ def packmanager():
     p_read.add_argument('file', help='Specify JSON file')
     p_read.set_defaults(func=cmd_json)
 
-
-    # TODO: CREATE PACK FROM SCRATCH
     p_conv = subparsers.add_parser('create', help='Create a new pack | packmanager.py create MyNewAwesomePack')
     p_conv.add_argument('name', help='Name of pack')
 
