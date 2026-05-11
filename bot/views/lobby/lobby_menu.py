@@ -13,7 +13,7 @@ from debug.DebugLogger import DebugLogger
 from game.game_manager import GameManager
 from game.game_registry import register_active_session, register_game_manager
 from game.game_session import GameSession
-from game.game_teams import get_lobby_teams
+from game.game_teams import get_lobby_teams, clear_teams
 
 
 class LobbyMenuView(BaseView):
@@ -111,6 +111,7 @@ class LobbyMenuView(BaseView):
         from bot.views.main_menu import MainMenuView
         from bot.states.lobby_state import unregister_hostLobby_view
         unregister_hostLobby_view(interaction.user.id)
+        clear_teams(self.host_id)
         from bot.connectBot import get_bot
         bot = get_bot()
         bot.dispatch("destroy_lobby", self.code)

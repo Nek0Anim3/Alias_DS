@@ -38,3 +38,12 @@ def get_lobby_teams(lobby_id: int):
         return registered_teams[lobby_id]
     else:
         return {}
+
+def find_team_in_lobby(lobby_id: int, team_name: str):
+    if registered_teams.get(lobby_id, None) is not None:
+        if team_name in registered_teams[lobby_id]:
+            DebugLogger.Console(f"FIND_TEAM DEBUG: FOUND TEAM {team_name}")
+            return True
+        return False
+    else:
+        return False

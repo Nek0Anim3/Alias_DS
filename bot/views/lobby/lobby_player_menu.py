@@ -48,12 +48,17 @@ class LobbyClientView(BaseView):
     async def quit_lobby_client(self, button: discord.ui.Button, interaction: discord.Interaction):
         from bot.views.main_menu import MainMenuView
         from bot.states.client_lobby_state import unregister_client_lobby
+        from bot.connectBot import get_bot
+        bot = get_bot()
+
         unregister_client_lobby(interaction.user.id)
+        bot.dispatch("exit_client_lobby", lobby_id=self.host_id, team_name=self.interaction.user.name)
         await asyncio.gather(
             removePlayerfromDB(interaction.user.id),
             leaveLobbyDB(self.code, interaction.user.id, interaction.user.name),
             self.goto(interaction, MainMenuView())
         )
+
         lobby = await findLobbyByCode(self.code)
         from bot.connectBot import get_bot
         bot = get_bot()
@@ -61,10 +66,7 @@ class LobbyClientView(BaseView):
 
     async def exit_lobby(self):
         from bot.views.main_menu import MainMenuView
-        from bot.connectBot import get_bot
         DebugLogger.Console("EXITING LOBBY CLIENT")
         view = MainMenuView()
-        bot = get_bot()
-        bot.dispatch("exit_client_lobby", self.interaction.user.name)
         await self.interaction.edit_original_response(
             content=view.menu_text, view=view)
