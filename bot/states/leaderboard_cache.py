@@ -9,5 +9,6 @@ def get_leaderboard_cache():
 
 def update_leaderboard_cache(leaderboard_data):
     global leaderboard_cache
-    leaderboard_cache[0] = leaderboard_data
+    leaderboard_cache = leaderboard_data
     DebugLogger.Console(f"Updated leaderboard cache")
+    return leaderboard_cache

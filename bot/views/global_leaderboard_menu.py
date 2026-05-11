@@ -11,11 +11,13 @@ class GlobalLeaderView(BaseView):
     def _build_text(self, leaderboard_list: list):
         lines = ["Глобальна таблиця лідерів\n------------------------"]
         for leaderboard in leaderboard_list:
-            del leaderboard["_id"]
-            del leaderboard["uid"]
-            del leaderboard["lobby_id"]
-            del leaderboard["role"]
-
+            try:
+                del leaderboard["_id"]
+                del leaderboard["uid"]
+                del leaderboard["lobby_id"]
+                del leaderboard["role"]
+            except KeyError:
+                break
         counter = 0
         for el in leaderboard_list:
             counter += 1

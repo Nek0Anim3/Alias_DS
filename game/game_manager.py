@@ -12,6 +12,7 @@ class GameManager:
         self.game_session = game_session
         self.player_moves = game_session.shuffle_players_list(game_session.teams)
         self.pointer_index = 0
+        self.win_value = 20 #DEBUG VALUE WIP
         self.current_leader = self.player_moves[self.pointer_index]
         DebugLogger.Console(f"GAME MANAGER INIT: self.player_moves[self.pointer_index] = {self.current_leader}")#совпадает с хостом, начинает первый
         self.player_roles = {}

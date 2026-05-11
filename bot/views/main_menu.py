@@ -5,7 +5,7 @@ from bot.states.interactions_state import save_interaction
 from bot.states.join_state import register_join_view
 from bot.states.states import set_state, States
 from bot.views.base import BaseView
-from bot.views.global_leaderboard_menu import get_cache_leaderboard, set_leaderboard_cache
+
 from db.lobbyHandle import createLobbyDB, fetch_leaderboard_db
 from debug.DebugLogger import DebugLogger
 
@@ -57,10 +57,10 @@ class MainMenuView(BaseView):
         from bot.states.leaderboard_cache import get_leaderboard_cache, update_leaderboard_cache
         cache = get_leaderboard_cache()
         print(f"Cache: {cache}")
-        if cache is []:
+        if cache == []:
             leader_dict = await fetch_leaderboard_db()
-            update_leaderboard_cache(leader_dict)
-        await self.goto(interaction, GlobalLeaderView(get_leaderboard_cache()))
+            cache = update_leaderboard_cache(leader_dict)
+        await self.goto(interaction, GlobalLeaderView(cache))
 
 
 

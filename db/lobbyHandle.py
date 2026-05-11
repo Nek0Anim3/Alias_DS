@@ -3,6 +3,7 @@ import math
 import random
 from datetime import datetime
 
+from bot.states.leaderboard_cache import update_leaderboard_cache
 from db import get_Db
 from db.userHandle import addPlayertoDB
 from debug.DebugLogger import DebugLogger
@@ -23,7 +24,7 @@ async def createLobbyDB(uid: int, name: str):
             "players": [uid],
             "player_names": [name],
             "pack": "Не обрано",
-            "timer": 10
+            "timer": 60 #WIP
         }),
         addPlayertoDB(uid, name, uid, "host")
     )
@@ -140,6 +141,10 @@ async def push_scores_db(game_manager: GameManager):
 
         DebugLogger.Console(f"MONGO: Updated score to {player}: {document['score']+scores_dict[player]}")
     DebugLogger.Console("MONGO: Pushed scores to DB")
+
+    docs = await fetch_leaderboard_db()
+    update_leaderboard_cache(docs)
+
 
 async def fetch_leaderboard_db():
     db = get_Db()

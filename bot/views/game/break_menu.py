@@ -43,11 +43,11 @@ class ContinueButton(discord.ui.Button):
     async def callback(self, interaction: discord.Interaction):
         from bot.connectBot import get_bot
         from game.game_registry import get_game_manager
-
+        game_manager = get_game_manager(self.lobby_id)
         bot = get_bot()
-        win_value = 5
+        #Debug WIN Value WIP
         for i in self.team_scores.values():
-            if i >= win_value:
+            if i >= game_manager.win_value:
                 bot.dispatch("win_game", game_manager=get_game_manager(self.lobby_id))
                 await interaction.response.defer()
                 return
