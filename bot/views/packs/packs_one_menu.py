@@ -3,6 +3,7 @@ import discord
 from bot.states.pack_view_state import get_pack_view
 from bot.views.base import BaseView
 from db.packs import removePack
+from debug.DebugLogger import DebugLogger
 
 
 class PackDescriptionMenu(BaseView):
@@ -15,11 +16,21 @@ class PackDescriptionMenu(BaseView):
         super().__init__(back_view=None)
 
     def _build_text(self):
-        words_str = "\n".join(f"{p}" for p in self.words)
+        #Hardcode limits to message 2000 characters
+        words_length = 0
+        words_str = ""
+        for word in self.words:
+            DebugLogger.Console(f"{word}")
+            if words_length >= 1900:
+                break
+            words_str = "\n".join(f"{word}")
+            words_length += len(words_str)
+
         return (
             f"Набір: {self.pack_name}\n"
             f"Слів: {len(self.words)}\n"
             f"{words_str}\n"
+            f".... | Показано (60) з {len(self.words)}\n"
         )
 
     @discord.ui.button(label="Видалити", style=discord.ButtonStyle.danger, row=0)

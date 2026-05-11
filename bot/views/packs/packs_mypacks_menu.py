@@ -2,6 +2,7 @@
 import discord
 
 from bot.views.base import BaseView
+from debug.DebugLogger import DebugLogger
 
 
 class PacksListView(BaseView):
@@ -12,6 +13,7 @@ class PacksListView(BaseView):
         super().__init__(back_view=None)
 
         for i, pack in enumerate(packs):
+
             self.add_item(PackButton(pack=pack, row=i // 3,))
         self.add_item(BackButton(row=4, view=PacksMenuView()))
 
@@ -25,8 +27,10 @@ class PackButton(discord.ui.Button):
         )
         self.pack = pack
 
+
     async def callback(self, interaction: discord.Interaction):
         from bot.views.packs.packs_one_menu import PackDescriptionMenu
+
         view = PackDescriptionMenu(
             pack_name=self.pack['name'],
             words=self.pack['words'],
