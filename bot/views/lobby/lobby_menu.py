@@ -2,6 +2,7 @@ import asyncio
 from collections import Counter
 import discord
 
+from bot.states.interactions_state import save_interaction
 from bot.states.states import get_state, States
 from bot.views.base import BaseView
 from bot.views.packs.pack_select_lobby import PacksSelectLobbyView
@@ -61,6 +62,8 @@ class LobbyMenuView(BaseView):
 
     @discord.ui.button(label="Почати Гру", style=discord.ButtonStyle.success, row=0)
     async def start_game(self, button: discord.ui.Button, interaction: discord.Interaction):
+        save_interaction(interaction.user.id, interaction)
+
         lobby = await findLobbyByCode(self.code)
         await update_status_lobby(lobby['host'], "ingame")
         pack = await getPackByName(lobby['pack'])

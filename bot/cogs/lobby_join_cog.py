@@ -10,6 +10,7 @@ class LobbyJoinCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
+        DebugLogger.Console(f"GOT MESSAGE {message.content}")
         if message.author.bot:
             return
         if get_state(message.author.id) == States.CODE_LOBBY_WAIT:

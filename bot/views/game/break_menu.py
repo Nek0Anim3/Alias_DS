@@ -1,4 +1,6 @@
 import discord
+
+from bot.states.interactions_state import save_interaction
 from bot.views.base import BaseView
 from debug.DebugLogger import DebugLogger
 
@@ -45,6 +47,7 @@ class ContinueButton(discord.ui.Button):
     async def callback(self, interaction: discord.Interaction):
         from bot.connectBot import get_bot
         from game.game_registry import get_game_manager
+        save_interaction(interaction.user.id, interaction)
         game_manager = get_game_manager(self.lobby_id)
         bot = get_bot()
         for i in self.team_scores.values():

@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 from bot.states.client_lobby_state import get_client_lobby
 from bot.states.interactions_state import get_interaction
+from bot.states.leaderboard_cache import update_leaderboard_cache
 from bot.states.lobby_state import get_hostLobby_view, unregister_hostLobby_view
 from bot.views.game.break_register import register_break_view, get_break_by_lobby_id, clear_break_views
 from bot.views.game.round_menu import RoundView
@@ -134,6 +135,7 @@ class GameUpdateCog(commands.Cog):
         await asyncio.gather(
             self._show_leaderboard(game_manager),
             push_scores_db(game_manager)
+
         )
 
     # -- One of my fav soundtracks Hunger and Hope - Between August and December

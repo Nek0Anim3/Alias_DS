@@ -10,7 +10,10 @@ load_dotenv()
 bot = None
 async def start_bot():
     global bot
-    bot = discord.Bot(intents=discord.Intents.default())
+    intents = discord.Intents.default()
+    intents.message_content = True
+    bot = discord.Bot(intents=intents)
+
 
     @bot.event
     async def on_ready():
