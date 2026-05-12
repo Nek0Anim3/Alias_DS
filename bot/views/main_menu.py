@@ -18,6 +18,7 @@ class MainMenuView(BaseView):
 
     @discord.ui.button(label="Створити Лобі", style=discord.ButtonStyle.primary, row=0)
     async def open_lobby(self, button: discord.ui.Button, interaction: discord.Interaction):
+        save_interaction(interaction.user.id, interaction)
         from bot.views.lobby.lobby_menu import LobbyMenuView
         lobby = await createLobbyDB(interaction.user.id, interaction.user.name)
         view = LobbyMenuView(
@@ -27,12 +28,14 @@ class MainMenuView(BaseView):
             players=lobby['player_names'],
             interaction=interaction,
             pack=lobby['pack'])
+
         lobby_state.register_hostLobby_view(interaction.user.id, view)
         await self.goto(interaction, view)
-        save_interaction(interaction.user.id, interaction)
+
 
     @discord.ui.button(label="Приєднатися", style=discord.ButtonStyle.primary, row=0)
     async def open_join(self, button: discord.ui.Button, interaction: discord.Interaction):
+        save_interaction(interaction.user.id, interaction)
         from bot.views.join_menu import JoinMenuView
         view = JoinMenuView(interaction)
         register_join_view(interaction.user.id, view)
